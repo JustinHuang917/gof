@@ -1,15 +1,37 @@
-<%import "models";"strconv"%>
+<%import "models";"strings" %>
 <%model models.User %>
 <%layout ./view/html/default.layout%>
 <div>
-	<%helper func displayDiv(s string){%>
-	 		<div><%=s%></div>
+	<%helper func display(s string,tag string){%>
+	 		<%if tag=="div"{%>
+	 			<div><%=s%></div>
+	 		<%}else if tag=="p"{%>
+	 			<p><%=s%></p>
+	 		<%}%>	
 	 	<%}%>
-	 <div>
-	 	<ul>
-	 		<li>UserName:<%=model.Name%></li>
-	 		<li>ID:<%=strconv.Itoa(model.Id)%></li>
-	 	<ul>
-	 </div>
-	 <%displayDiv("Welcome!!!")%>
-</div>
+
+	<% names:="justinhuang;jordan;mike"
+		for _,name :=range strings.Split(names,";"){%>
+			<p><%=name%></p>	
+	   <%}%>
+	 <%if 1==1{%>
+	 	<p><%display("xxxxxxxx","div")%></p>
+	 <%}else{%>
+	 	<p>aaaaaaaa</p>
+	 <%}%>
+	 <% k:=1
+	 	switch{case k==1:%>
+	 		<p>k==1</p>
+	 	<%case k==2:%>
+	 		<p>k==2</p>
+	 	<%}%>
+	 	<div>
+	 		<%display("justinhuang","p")%>
+	 	</div>
+	 	<%switch{case k==1:%>
+	 		<p><%=DisplayTextBox("txtUserName","",*&map[string]string{"name":"User.Name"})%></p>
+	 	<%case k==2:%>
+	 		<p>k==2</p>
+	 	<%}%>
+
+	

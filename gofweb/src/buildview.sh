@@ -1,2 +1,2 @@
 #/bin/sh
-./gof compileview view/ view/  view/viewbase.go
+./gof compileview view/ view/  view/helper.go
