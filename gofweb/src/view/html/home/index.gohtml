@@ -1,0 +1,15 @@
+<%import "models";"strconv"%>
+<%model models.User %>
+<%layout ./view/html/default.layout%>
+<div>
+	<%helper func displayDiv(s string){%>
+	 		<div><%=s%></div>
+	 	<%}%>
+	 <div>
+	 	<ul>
+	 		<li>UserName:<%=model.Name%></li>
+	 		<li>ID:<%=strconv.Itoa(model.Id)%></li>
+	 	<ul>
+	 </div>
+	 <%displayDiv("Welcome!!!")%>
+</div>

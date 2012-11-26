@@ -1,0 +1,6 @@
+{
+	"AppPath":"/app/",
+	"Port":":9999",
+	"DefaultPath":"home/index",
+	"NotFoundPath":"home/nofound"
+}
