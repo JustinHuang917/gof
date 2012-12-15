@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"razor"
 	"strings"
 	"time"
 )
@@ -77,28 +78,65 @@ func NewCompiler(path string, OutputPath string) (*Comiler, error) {
 	return compiler, nil
 }
 
-func (c *Comiler) Compile(needOutput bool) (err error) {
-	var result = ""
-	src := string(c.bytes)
-	for _, span := range strings.Split(src, open_tag) {
-		innerSpans := strings.Split(span, close_tag)
-		l := len(innerSpans)
-		if l == 1 {
-			result += c.html(innerSpans[0])
-		} else {
-			code0 := innerSpans[0]
-			code1 := innerSpans[1]
-			result += c.logic(code0)
-			if len(code1) > 0 {
-				result += c.html(code1)
+func (c *Comiler) RazorCompile() {
+	parserEngine := razor.NewRazorParserEngine(string(c.bytes))
+	parserEngine.Parse()
+	c.Result.OutPutContent = genRazorOutput(parserEngine.ParserModel.Segements)
+	c.Result.ModelTypeName = parserEngine.ParserModel.ModelName
+	c.Result.LayoutPath = parserEngine.ParserModel.LayoutPath
+	c.Result.Imports = parserEngine.ParserModel.ImportParts
+
+}
+
+func genRazorOutput(segements []*razor.Segement) string {
+	output := ""
+	temp := ""
+	for _, seg := range segements {
+		temp = ""
+		switch seg.SegementType {
+		case razor.String:
+			temp = strings.Replace(seg.Content, "\r", "\\r", -1)
+			temp = strings.Replace(temp, "\n", "\\n", -1)
+			temp = writeout_begin + "\"" + temp + "\"" + writeout_end
+			temp += "\n"
+		case razor.GoCodeBlock:
+			temp = seg.Content
+			temp += "\n"
+		case razor.Variable:
+			temp = writeout_begin + seg.Content + writeout_end
+			temp += "\n"
+		}
+		output += temp
+	}
+	return output
+}
+
+func (c *Comiler) Compile(needOutput bool, isRazor bool) (err error) {
+	if isRazor {
+		c.RazorCompile()
+	} else {
+		var result = ""
+		src := string(c.bytes)
+		for _, span := range strings.Split(src, open_tag) {
+			innerSpans := strings.Split(span, close_tag)
+			l := len(innerSpans)
+			if l == 1 {
+				result += c.html(innerSpans[0])
+			} else {
+				code0 := innerSpans[0]
+				code1 := innerSpans[1]
+				result += c.logic(code0)
+				if len(code1) > 0 {
+					result += c.html(code1)
+				}
 			}
 		}
+		c.Result.OutPutContent = result
 	}
-	c.Result.OutPutContent = result
 	c.Result.RouteName = getRouteName(c.FilePath)
 	var html string
 	if b := c.Result.isNeedLayout(); b {
-		html, err = c.Result.formatHtmlWithLayout()
+		html, err = c.Result.formatHtmlWithLayout(isRazor)
 	} else {
 		html, err = c.Result.formatHtmlNoLayout()
 	}
@@ -122,8 +160,8 @@ func (c *CompileResult) formatHtmlNoLayout() (html string, err error) {
 	return
 }
 
-func (c *CompileResult) formatHtmlWithLayout() (html string, err error) {
-	layoutResult, err2 := compileLayout(c.LayoutPath)
+func (c *CompileResult) formatHtmlWithLayout(isRazor bool) (html string, err error) {
+	layoutResult, err2 := compileLayout(c.LayoutPath, isRazor)
 	if err2 == nil {
 		layoutBodyResult := c.OutPutContent
 		html = fmt.Sprintf(LayoutviewTemplate,
@@ -281,14 +319,15 @@ func init() {
 	layoutResultCache = make(map[string]*CompileResult)
 }
 
-func compileLayout(layoutPath string) (compileResult *CompileResult, err error) {
+func compileLayout(layoutPath string, isRazor bool) (compileResult *CompileResult, err error) {
+	fmt.Println(layoutPath)
 	if layoutResultCache[layoutPath] == nil {
 		c, err1 := NewCompiler(layoutPath, "")
 		if err1 != nil {
 			err = err1
 			return
 		}
-		err = c.Compile(false)
+		err = c.Compile(false, isRazor)
 		compileResult = c.Result
 		layoutResultCache[layoutPath] = compileResult
 		//fmt.Println(" not hited")
@@ -301,7 +340,7 @@ func compileLayout(layoutPath string) (compileResult *CompileResult, err error) 
 
 type visitor struct{}
 
-func (self *visitor) DoCompile(path string, outputDir string, f os.FileInfo, buidingArgs ...string) error {
+func (self *visitor) DoCompile(path string, outputDir string, isRazor bool, f os.FileInfo, buidingArgs ...string) error {
 	if f == nil {
 		return nil
 	}
@@ -321,7 +360,7 @@ func (self *visitor) DoCompile(path string, outputDir string, f os.FileInfo, bui
 				return err1
 			}
 			fmt.Println("Parsing:", path)
-			err = c.Compile(true)
+			err = c.Compile(true, isRazor)
 			if err != nil {
 				fmt.Println(err)
 			} else {
@@ -343,14 +382,12 @@ func (self *visitor) DoCompile(path string, outputDir string, f os.FileInfo, bui
 	return nil
 }
 
-func Compile(dirPath string, outputDir string, buidingArgs ...string) error {
-	fmt.Println(outputDir)
-	fmt.Println(buidingArgs)
+func Compile(dirPath string, outputDir string, isRazor bool, buidingArgs ...string) error {
 	begin := time.Now()
 	v := &visitor{}
 	//Clear()
 	err := filepath.Walk(dirPath, func(path string, f os.FileInfo, err error) error {
-		err1 := v.DoCompile(path, outputDir, f, buidingArgs...)
+		err1 := v.DoCompile(path, outputDir, isRazor, f, buidingArgs...)
 		return err1
 	})
 	if err != nil {
@@ -390,6 +427,7 @@ func getViewName(filepath string) string {
 	viewName := strings.Replace(filepath, ".", "", -1)
 	viewName = strings.Replace(viewName, "/", "_", -1)
 	viewName = strings.Replace(viewName, "view_html", "", -1)
+	viewName = strings.Replace(viewName, "view_razor", "", -1)
 	viewName = "V" + strings.Replace(viewName, "gohtml", "", -1)
 	return viewName
 }

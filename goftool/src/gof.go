@@ -16,6 +16,7 @@ func main() {
 
 	case arg0 == "compileview": //Compile View
 		viewDir := "./view" //Default view path
+		isRazor := false
 		if flag.NArg() > 1 {
 			viewDir = flag.Arg(1) //"./view/html/"
 		}
@@ -23,7 +24,10 @@ func main() {
 		if flag.NArg() > 2 {
 			outputdir = flag.Arg(2)
 		}
-		err := goftool.Compile(viewDir, outputdir, flag.Args()[3:]...)
+		if flag.NArg() > 3 && flag.Arg(3) == "razor" {
+			isRazor = true
+		}
+		err := goftool.Compile(viewDir, outputdir, isRazor, flag.Args()[4:]...)
 		if err != nil {
 			fmt.Println(err)
 			return
