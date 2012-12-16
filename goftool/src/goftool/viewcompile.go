@@ -24,6 +24,7 @@ const (
 	else_if_tag        = "}elseif{"
 	helper_tag         = "helper"
 	gohtml_ext         = ".gohtml"
+	gorazor_ext        = ".gorazor"
 	defaultModel       = "core.NilModel"
 )
 
@@ -194,6 +195,7 @@ func (c *Comiler) html(code string) string {
 	c.LineCount += len(strings.Split("\n", code))
 	code = strings.Replace(code, "\r", "\\r", -1)
 	code = strings.Replace(code, "\n", "\\n", -1)
+	code = strings.Replace(code, `"`, `\"`, -1)
 	code = writeout_begin + "\"" + code + "\"" + writeout_end
 	code = code + "\n"
 	return code
@@ -330,17 +332,15 @@ func compileLayout(layoutPath string, isRazor bool) (compileResult *CompileResul
 		err = c.Compile(false, isRazor)
 		compileResult = c.Result
 		layoutResultCache[layoutPath] = compileResult
-		//fmt.Println(" not hited")
 	} else {
 		compileResult = layoutResultCache[layoutPath]
-		//fmt.Println("hited")
 	}
 	return
 }
 
 type visitor struct{}
 
-func (self *visitor) DoCompile(path string, outputDir string, isRazor bool, f os.FileInfo, buidingArgs ...string) error {
+func (self *visitor) DoCompile(path string, outputDir string, f os.FileInfo, buidingArgs ...string) error {
 	if f == nil {
 		return nil
 	}
@@ -353,7 +353,12 @@ func (self *visitor) DoCompile(path string, outputDir string, isRazor bool, f os
 		return nil
 	} else {
 		var err error
-		if strings.Contains(f.Name(), gohtml_ext) {
+		extName := filepath.Ext(f.Name())
+		if extName == gohtml_ext || extName == gorazor_ext {
+			isRazor := false
+			if extName == gorazor_ext {
+				isRazor = true
+			}
 			OutputPath := filepath.Join(outputDir, getViewName(path)+".go")
 			c, err1 := NewCompiler(path, OutputPath)
 			if err1 != nil {
@@ -382,12 +387,12 @@ func (self *visitor) DoCompile(path string, outputDir string, isRazor bool, f os
 	return nil
 }
 
-func Compile(dirPath string, outputDir string, isRazor bool, buidingArgs ...string) error {
+func Compile(dirPath string, outputDir string, buidingArgs ...string) error {
 	begin := time.Now()
 	v := &visitor{}
 	//Clear()
 	err := filepath.Walk(dirPath, func(path string, f os.FileInfo, err error) error {
-		err1 := v.DoCompile(path, outputDir, isRazor, f, buidingArgs...)
+		err1 := v.DoCompile(path, outputDir, f, buidingArgs...)
 		return err1
 	})
 	if err != nil {
@@ -427,8 +432,8 @@ func getViewName(filepath string) string {
 	viewName := strings.Replace(filepath, ".", "", -1)
 	viewName = strings.Replace(viewName, "/", "_", -1)
 	viewName = strings.Replace(viewName, "view_html", "", -1)
-	viewName = strings.Replace(viewName, "view_razor", "", -1)
-	viewName = "V" + strings.Replace(viewName, "gohtml", "", -1)
+	viewName = "V" + strings.Replace(viewName, gohtml_ext[1:], "", -1)
+	viewName = strings.Replace(viewName, gorazor_ext[1:], "", -1)
 	return viewName
 }
 
@@ -436,6 +441,8 @@ func getRouteName(filepath string) string {
 	routeName := strings.Replace(filepath, ".", "", -1)
 	//routeName = strings.Replace(routeName, "/", "_", -1)
 	routeName = strings.Replace(routeName, "view/html", "", -1)
-	routeName = strings.Replace(routeName, "gohtml", "", -1)
+	routeName = strings.Replace(routeName, gohtml_ext[1:], "", -1)
+	routeName = strings.Replace(routeName, gorazor_ext[1:], "", -1)
+
 	return routeName
 }

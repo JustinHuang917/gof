@@ -1,0 +1,22 @@
+@import "models"
+@model models.User
+@layout ./view/html/defaultrazor.layout
+
+@helper func displayDiv(innertext string){
+		<div>@innertext</div>
+	 }
+
+ @if model.Name=="justinhuang"{
+ 	<p>@{displayDiv(model.Name)}</p>
+ } 
+ <br/>
+@{
+	i:=1
+	j:=2
+}
+ @*
+  	This is Comment
+  	Just Testing	
+ *@
+<p>i=@i</p>
+<p>j=@j</p>

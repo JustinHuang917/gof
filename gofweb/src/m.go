@@ -18,8 +18,8 @@ func main() {
 	view.Init()
 	controller.Init()
 	fmt.Println(cfg.AppConfig.AppPath)
-	http.HandleFunc(cfg.AppConfig.AppPath, core.Handel) //设置访问的路由
-	err = http.ListenAndServe(cfg.AppConfig.Port, nil)  //设置监听的端口
+	http.HandleFunc(cfg.AppConfig.AppPath, core.Handel)
+	err = http.ListenAndServe(cfg.AppConfig.Port, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

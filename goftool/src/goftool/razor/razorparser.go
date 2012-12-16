@@ -163,7 +163,9 @@ func (p *RazorParserEngine) handleString(startIndex, len int) {
 	if len <= 0 {
 		return
 	}
-	seg := &Segement{String, p.srcString[startIndex : startIndex+len-1]}
+	s := p.srcString[startIndex : startIndex+len-1]
+	s = strings.Replace(s, `"`, `\"`, -1)
+	seg := &Segement{String, s}
 	p.ParserModel.Segements = append(p.ParserModel.Segements, seg)
 	p.ParserModel.segmentIndex = startIndex + len
 }
