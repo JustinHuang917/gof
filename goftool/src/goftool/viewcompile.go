@@ -3,11 +3,11 @@ package goftool
 import (
 	"errors"
 	"fmt"
+	"goftool/razor"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"razor"
 	"strings"
 	"time"
 )
