@@ -13,7 +13,12 @@ type BuildResult struct {
 }
 
 func Building(goFilePath string, buidingArgs ...string) *BuildResult {
-	out, err := run(goFilePath, buidingArgs...)
+	cmd1 := gobuild(goFilePath, buidingArgs...)
+	cmd2 := gofmt(goFilePath)
+	out, err := run(cmd1)
+	if err == nil {
+		out, err = run(cmd2)
+	}
 	return &BuildResult{err, out}
 }
 
@@ -35,16 +40,34 @@ func kill() {
 	stopRun()
 }
 
-func run(path string, buidingArgs ...string) ([]byte, error) {
-	var buf bytes.Buffer
+func gofmt(path string) *exec.Cmd {
+	args := make([]string, 2, 10)
+	args[0] = "-w"
+	args[1] = path
+	cmd := exec.Command("gofmt", args...)
+	return cmd
+}
+
+func gobuild(path string, buidingArgs ...string) *exec.Cmd {
 	args := make([]string, 2, 10)
 	args[0] = "build"
 	args[1] = path
 	args = append(args, buidingArgs...)
-	//cmd := exec.Command("go", "build", path, buidingArgs...)
 	cmd := exec.Command("go", args...)
+	return cmd
+}
+
+func run(cmd *exec.Cmd) ([]byte, error) {
+	var buf bytes.Buffer
+	// args := make([]string, 2, 10)
+	// args[0] = "build"
+	// args[1] = path
+	// args = append(args, buidingArgs...)
+	// //cmd := exec.Command("go", "build", path, buidingArgs...)
+	// cmd := exec.Command("go", args...)
 	cmd.Stdout = &buf
 	cmd.Stderr = cmd.Stdout
+
 	// Start command and leave in 'running'.
 	running.Lock()
 	if running.cmd != nil {
