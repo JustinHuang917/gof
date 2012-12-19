@@ -1,2 +1,2 @@
 #!/bin/sh
-./gof clearview
+./gof -action clearview
