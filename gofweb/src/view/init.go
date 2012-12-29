@@ -1,5 +1,0 @@
-package view
-
-func Init() {
-
-}
