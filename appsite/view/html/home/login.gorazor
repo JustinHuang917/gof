@@ -1,0 +1,8 @@
+@import "github.com/justinhuang917/gof/appsite/models"
+@model models.User
+@layout ./appsite/view/html/defaultrazor.layout
+
+@helper func displayDiv(innertext string){
+		<div>@innertext</div>
+	 }
+@{displayDiv("Wlecome"+model.Name)}

@@ -1,0 +1,8 @@
+{
+	"AppPath":"/app/",
+	"Port":":9999",
+	"DefaultPath":"home/index",
+	"NotFoundPath":"home/nofound",
+	"GofSessionId": "_gofSessionId_",
+	"SessionMode":"InProc"
+}

@@ -1,0 +1,13 @@
+@import "github.com/justinhuang917/gof/appsite/models"
+@model models.User
+@layout ./appsite/view/html/defaultrazor.layout
+
+
+<form action="./login" method="post">
+	<div>
+		<input type="text" id="txtName" name="Name"/>
+		<input type="text" id="txtPassword" name="Password"/>
+		<input type="Submit" value="Login"/>
+	</div>
+</form>
+
