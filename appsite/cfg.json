@@ -4,7 +4,5 @@
 	"DefaultPath":"home/index",
 	"NotFoundPath":"home/nofound",
 	"GofSessionId": "_gofSessionId_",
-	"SessionMode":"InProc",
-	"EnableSession":"true",
-	"SessionExpires":3600
+	"SessionMode":"InProc"
 }

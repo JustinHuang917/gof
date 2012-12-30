@@ -11,15 +11,8 @@ import (
 )
 
 func main() {
-	// err := cfg.Load("./appsite/cfg.json")
-	// if err != nil {
-	// 	log.Fatal("Load Config Error: ", err)
-	// }
-	//gofcore.Init()
-
 	controller.Init()
 	view.Init()
-	fmt.Println(cfg.AppConfig.AppPath)
 	http.HandleFunc(cfg.AppConfig.AppPath, gofcore.Handel)
 	err := http.ListenAndServe(cfg.AppConfig.Port, nil)
 	if err != nil {

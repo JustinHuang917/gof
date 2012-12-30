@@ -105,6 +105,7 @@ type HttpContext struct {
 	ResponseWriter        http.ResponseWriter
 	RouteName             string
 	ViewBag               ViewBag
+	GofSessionId          string
 }
 
 func initHttpContext(w http.ResponseWriter, r *http.Request) *HttpContext {
@@ -133,6 +134,7 @@ func initHttpContext(w http.ResponseWriter, r *http.Request) *HttpContext {
 	context.ResponseWriter = w
 	context.Request = r
 	context.RouteName = strings.ToLower("/" + context.ControllerName + "/" + context.ActionName)
+	context.GofSessionId = ""
 	return context
 }
 
@@ -182,6 +184,19 @@ func init() {
 		noFoundActionName = noFoundArr[1]
 	}
 	RegistHandler(&DefaultHandler{})
+	RegistHandler(&SessionHandler{})
+	if cfg.AppConfig.EnableSession {
+		sMode := cfg.AppConfig.SessionMode
+		var session *ISession
+		switch sMode {
+		case "InPorc":
+			session = NewInProcSession()
+			break
+		default:
+			session = NewInProcSession()
+		}
+		InitialzieSeesion(session)
+	}
 }
 
 func Handel(w http.ResponseWriter, r *http.Request) {
@@ -212,9 +227,29 @@ func (d *DefaultHandler) Handel(context *HttpContext) {
 type SessionHandler struct {
 }
 
-func (d *SessionHandler) Handel(context *HttpContext) {
-	// c := http.Request.Cookie(cfg.AppConfig.GofSessionId)
-	// if c != nil {
+func (s *SessionHandler) Handel(context *HttpContext) {
+	if cfg.AppConfig.EnableSession {
+		sid := cfg.AppConfig.GofSessionId
+		ck, err := context.Request.Cookie(sid)
+		if err != nil {
+			expires := cfg.AppConfig.SessionExpires
+			cid := getUid()
+			c := &http.Cookie{
+				Name:     sid,
+				Value:    cid,
+				Path:     "/",
+				Expires:  time.Now().Add(-expires),
+				HttpOnly: true,
+			}
+			context.Request.AddCookie(c)
+			context.GofSessionId = cid
+		} else {
+			context.GofSessionId = ck.Value
+		}
+	}
 
-	// }
+}
+
+func (s *SessionHandler) Order() {
+	return -1
 }

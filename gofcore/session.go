@@ -1,51 +1,52 @@
 package gofcore
 
-// import (
-// 	"sync"
-// 	"github.com/justinhuang917/gof/gofcore/cfg"
-// )
+import (
+	"github.com/justinhuang917/gof/gofcore/cfg"
+	"time"
+)
 
-// type SessionManager *SessionManager
+var (
+	SeesionMgr     sessionManager
+	sessionExpires int
+)
 
-// func func init() {
-// 	SessionManager=&SessionManager{}
-// 	//SessionManager
-// }
+func InitialzieSeesion(session *ISession) {
+	SeesionMgr = *&sessionManager{}
+	SeesionMgr.Session = *session
+	sessionExpires = cfg.AppConfig.SessionExpires
+}
+func setTimeout(timeout time.Duration, name string) {
+	t := time.NewTimer(timeout)
+	go clearSession(t.C, name)
+}
 
-// type SessionManager struct {
-// 	Session       *ISession
-// 	SessionIdName string
-// }
+func clearSession(c <-chan time.Time, name string) {
+	SeesionMgr.Session.Remove(name)
+}
 
-// type ISession interface {
-// 	Get(name string) interface{}
-// 	Set(name string, value interface{})
-// 	Remove(name string)
-// }
+func (s *sessionManager) Get(sessionId, name string) interface{} {
+	sname := sessionId + "_" + name
+	return s.Session.Get(sname)
+}
+func (s *sessionManager) Set(sessionId, name string, value interface{}) {
+	sname := sessionId + "_" + name
+	s.Session.Set(sname, value)
+	t := int64(sessionExpires * 1e9)
+	td := time.Duration(t)
+	setTimeout(td, sname)
+}
+func (s *sessionManager) Remove(sessionId, name string) {
+	sname := sessionId + "_" + name
+	s.Session.Remove(sname)
+}
 
-// type InProcSession struct {
-// 	innerMap map[string]interface{}
-// 	mutex    sync.RWMutex
-// }
+type sessionManager struct {
+	Session       ISession
+	SessionIdName string
+}
 
-// func (i *InProcSession) Get(name string) interface{} {
-// 	defer i.mutex.RUnlock()
-// 	i.mutex.RLock()
-// 	v, ok := i.innerMap[name]
-// 	if ok {
-// 		return v
-// 	}
-// 	return nil
-// }
-
-// func (i *InProcSession) Set(name string, value interface{}) {
-// 	i.mutex.Lock()
-// 	i.innerMap[name] = value
-// 	i.mutex.Unlock()
-// }
-
-// func (i *InProcSession) Remove(name string) {
-// 	i.mutex.Lock()
-// 	delete(i.innerMap[name])
-// 	i.mutex.Unlock()
-// }
+type ISession interface {
+	Get(name string) interface{}
+	Set(name string, value interface{})
+	Remove(name string)
+}
