@@ -7,7 +7,9 @@ import (
 	"io"
 	"math/big"
 	"strconv"
+	"strings"
 	"time"
+	"unicode"
 )
 
 func getMd5Hex(s string) string {
@@ -26,4 +28,16 @@ func genUId() (string, error) {
 		guid = getMd5Hex(time.Now().UTC().Format(time.ANSIC) + s)
 	}
 	return guid, err
+}
+
+func firstCharToUpper(s string) string {
+	index := 0
+	s1 := strings.Map(func(c rune) rune {
+		index++
+		if index == 1 {
+			return unicode.ToUpper(c)
+		}
+		return unicode.ToLower(c)
+	}, s)
+	return s1
 }

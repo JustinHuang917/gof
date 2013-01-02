@@ -25,7 +25,20 @@ func (d *V_home_index) Render(out *bytes.Buffer, m interface{}, viewBag gofcore.
 
 				d.Writeout(out, "\n")
 
-				d.Writeout(out, "\n\n\n<form action=\"./login\" method=\"post\">\n	<div>\n		<input type=\"text\" id=\"txtName\" name=\"Name\"/>\n		<input type=\"text\" id=\"txtPassword\" name=\"Password\"/>\n		<input type=\"Submit\" value=\"Login\"/>\n	</div>\n</form>\n\n")
+				d.Writeout(out, "\n\n")
+
+				displayDiv := func(innertext string) {
+					d.Writeout(out, "\n		<div>")
+
+					d.Writeout(out, innertext)
+
+					d.Writeout(out, "</div>\n	 ")
+
+				}
+				d.Writeout(out, "")
+
+				displayDiv("Wlecome" + model.Name)
+				d.Writeout(out, "")
 
 			}
 			d.Writeout(out, "<html>\n	<body>\n		<div>\n			")

@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"unicode"
+	//"unicode"
 )
 
 func InvokeAction(context *HttpContext) {
@@ -14,7 +14,6 @@ func InvokeAction(context *HttpContext) {
 	controller := GetController(controllerName)
 	actionName := getActionName(context, context.ActionName)
 	var result []reflect.Value
-	fmt.Println("actionName:", actionName)
 	if controller == nil {
 		controllerName = context.NoFoundControllerName
 		actionName = getActionName(context, context.NoFoundActionName)
@@ -35,6 +34,7 @@ func InvokeAction(context *HttpContext) {
 	if !m.IsValid() {
 		return
 	}
+	InvokeBeforeFilters(controller, context, controllerName, actionName)
 	if m.Type().NumIn() > 0 {
 		args := make([]reflect.Value, 1, 1)
 		args[0] = reflect.ValueOf(context)
@@ -49,8 +49,14 @@ func InvokeAction(context *HttpContext) {
 	} else {
 		result = m.Call(nil)
 	}
-	vr := result[0].Interface().(*ViewResult)
-	fmt.Fprintf(context.ResponseWriter, string(vr.Content.Bytes()))
+	InvokeAfterFilters(controller, context, controllerName, actionName)
+	if result != nil && len(result) > 0 {
+		vr := result[0].Interface().(*ViewResult)
+		if vr != nil {
+			// fmt.Println(result[0].Interface().(*ViewResult))
+			fmt.Fprintf(context.ResponseWriter, string(vr.Content.Bytes()))
+		}
+	}
 }
 
 const (
@@ -61,16 +67,15 @@ const (
 //Match the action name with action method name
 func getActionName(context *HttpContext, originalActionName string) string {
 	s := originalActionName
-	index := 0
 	//First char to upercase eg:action=>Action
-	actionName := strings.Map(func(c rune) rune {
-		index++
-		if index == 1 {
-			return unicode.ToUpper(c)
-		}
-		return unicode.ToLower(c)
-	}, s)
-
+	// actionName := strings.Map(func(c rune) rune {
+	// 	index++
+	// 	if index == 1 {
+	// 		return unicode.ToUpper(c)
+	// 	}
+	// 	return unicode.ToLower(c)
+	// }, s)
+	actionName := firstCharToUpper(s)
 	if context.Request.Method == "GET" {
 		return getActionPrefix + actionName
 	} else if context.Request.Method == "POST" {
