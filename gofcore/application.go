@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	//"time"
 )
 
 type IView interface {
@@ -186,16 +187,7 @@ func init() {
 	RegistHandler(&DefaultHandler{})
 	RegistHandler(&SessionHandler{})
 	if cfg.AppConfig.EnableSession {
-		sMode := cfg.AppConfig.SessionMode
-		var session *ISession
-		switch sMode {
-		case "InPorc":
-			session = NewInProcSession()
-			break
-		default:
-			session = NewInProcSession()
-		}
-		InitialzieSeesion(session)
+		InitialzieSeesion()
 	}
 }
 
@@ -231,18 +223,28 @@ func (s *SessionHandler) Handel(context *HttpContext) {
 	if cfg.AppConfig.EnableSession {
 		sid := cfg.AppConfig.GofSessionId
 		ck, err := context.Request.Cookie(sid)
-		if err != nil {
+		fmt.Println(context.Request.Cookies())
+		if err != nil || ck == nil || ck.Value == "" {
+			fmt.Println(ck)
 			expires := cfg.AppConfig.SessionExpires
-			cid := getUid()
-			c := &http.Cookie{
-				Name:     sid,
-				Value:    cid,
-				Path:     "/",
-				Expires:  time.Now().Add(-expires),
-				HttpOnly: true,
+			fmt.Println(expires)
+			//d := time.Duration(expires)
+			cid, err1 := genUId()
+			if err1 == nil {
+				c := &http.Cookie{
+					Name:  sid,
+					Value: cid,
+					Path:  "/",
+					//Expires:  time.Now().Add(d),
+					HttpOnly: true,
+					MaxAge:   expires,
+				}
+				context.Request.AddCookie(c)
+				http.SetCookie(context.ResponseWriter, c)
+				context.GofSessionId = cid
+			} else {
+				panic("Generate cookie id error")
 			}
-			context.Request.AddCookie(c)
-			context.GofSessionId = cid
 		} else {
 			context.GofSessionId = ck.Value
 		}
@@ -250,6 +252,6 @@ func (s *SessionHandler) Handel(context *HttpContext) {
 
 }
 
-func (s *SessionHandler) Order() {
+func (s *SessionHandler) Order() int {
 	return -1
 }

@@ -16,7 +16,7 @@ func NewInProcSession() *InProcSession {
 	return s
 }
 
-func (i *InProcSession) Get(name string) interface{} {
+func (i InProcSession) Get(name string) interface{} {
 	defer i.mutex.RUnlock()
 	i.mutex.RLock()
 	v, ok := i.innerMap[name]
@@ -26,13 +26,13 @@ func (i *InProcSession) Get(name string) interface{} {
 	return nil
 }
 
-func (i *InProcSession) Set(name string, value interface{}) {
+func (i InProcSession) Set(name string, value interface{}) {
 	i.mutex.Lock()
 	i.innerMap[name] = value
 	i.mutex.Unlock()
 }
 
-func (i *InProcSession) Remove(name string) {
+func (i InProcSession) Remove(name string) {
 	i.mutex.Lock()
 	_, ok1 := i.innerMap[name]
 	if ok1 {

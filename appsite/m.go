@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/justinhuang917/gof/appsite/controller"
 	"github.com/justinhuang917/gof/appsite/view"
 	"github.com/justinhuang917/gof/gofcore"

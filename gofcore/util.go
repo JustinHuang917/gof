@@ -3,6 +3,7 @@ package gofcore
 import (
 	"crypto/md5"
 	"crypto/rand"
+	"fmt"
 	"io"
 	"math/big"
 	"strconv"
@@ -12,7 +13,8 @@ import (
 func getMd5Hex(s string) string {
 	h := md5.New()
 	io.WriteString(h, s)
-	return string(h.Sum(nil))
+	r := fmt.Sprintf("%x", h.Sum(nil))
+	return r
 }
 
 func genUId() (string, error) {

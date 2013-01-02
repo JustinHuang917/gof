@@ -5,6 +5,6 @@
 	"NotFoundPath":"home/nofound",
 	"GofSessionId": "_gofSessionId_",
 	"SessionMode":"InProc",
-	"EnableSession":"true",
+	"EnableSession":true,
 	"SessionExpires":3600
 }
