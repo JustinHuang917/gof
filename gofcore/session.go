@@ -3,7 +3,6 @@ package gofcore
 import (
 	"fmt"
 	"github.com/justinhuang917/gof/gofcore/cfg"
-	//"sync"
 	"time"
 )
 
@@ -11,16 +10,12 @@ var (
 	SessionMgr           sessionManager
 	sessionExpires       int
 	SessionIsInitialized bool
-	//initialMutex         *sync.Mutex
 )
 
 func init() {
-	//initialMutex = new(sync.Mutex)
 	SessionIsInitialized = false
 }
 func InitialzieSeesion() {
-	//initialMutex.Lock()
-	fmt.Println("initilizing")
 	if !SessionIsInitialized {
 		sMode := cfg.AppConfig.SessionMode
 		var session ISession
@@ -36,7 +31,6 @@ func InitialzieSeesion() {
 		sessionExpires = cfg.AppConfig.SessionExpires
 	}
 	SessionIsInitialized = true
-	//	initialMutex.Unlock()
 }
 
 func setTimeout(timeout time.Duration, name string) {
@@ -50,8 +44,6 @@ func clearSession(c <-chan time.Time, name string) {
 
 func (s *sessionManager) Get(sessionId, name string) interface{} {
 	sname := sessionId + "_" + name
-	fmt.Println(s.Session)
-	fmt.Println("Geted:", sname)
 	return s.Session.Get(sname)
 }
 func (s *sessionManager) Set(sessionId, name string, value interface{}) {
@@ -59,8 +51,6 @@ func (s *sessionManager) Set(sessionId, name string, value interface{}) {
 	s.Session.Set(sname, value)
 	t := int64(sessionExpires * 1e9)
 	td := time.Duration(t)
-	fmt.Println("Seted:", sname)
-	fmt.Println(s.Session)
 	setTimeout(td, sname)
 }
 func (s *sessionManager) Remove(sessionId, name string) {
