@@ -3,7 +3,6 @@ package gofcore
 import (
 	"fmt"
 	"reflect"
-	//	"strings"
 	"sync"
 )
 
@@ -25,18 +24,17 @@ func init() {
 }
 
 func InvokeBeforeFilters(controller interface{}, context *HttpContext, controllerName, actionName string) {
-	beforeControllerFilterName := getBeforeFilterName(controllerName)
+	beforeControllerFilterName := getBeforeFilterName("Controller")
 	beforeActionFilterName := getBeforeFilterName(actionName)
 	beforeContollerFilter := getMethondInController(controller, beforeControllerFilterName)
 	beforeActionFilter := getMethondInController(controller, beforeActionFilterName)
 	invokeFilter(beforeContollerFilter, context)
 	invokeFilter(beforeActionFilter, context)
-
 }
 
 func invokeFilter(filter reflect.Value, context *HttpContext) {
 	if filter.IsValid() {
-		if filter.Type().NumIn() == 0 {
+		if filter.Type().NumIn() == 1 {
 			args := make([]reflect.Value, 1, 1)
 			args[0] = reflect.ValueOf(context)
 			filter.Call(args)
@@ -48,7 +46,7 @@ func invokeFilter(filter reflect.Value, context *HttpContext) {
 	}
 }
 func InvokeAfterFilters(controller interface{}, context *HttpContext, controllerName, actionName string) {
-	afterControllerFilterName := getAfterFilterName(controllerName)
+	afterControllerFilterName := getAfterFilterName("Controller")
 	afterActionFilterName := getAfterFilterName(actionName)
 	afterContollerFilter := getMethondInController(controller, afterControllerFilterName)
 	afterActionFilter := getMethondInController(controller, afterActionFilterName)
@@ -57,23 +55,24 @@ func InvokeAfterFilters(controller interface{}, context *HttpContext, controller
 }
 
 func getBeforeFilterName(identifyName string) string {
-	identifyName = firstCharToUpper(identifyName)
 	return beforeFilterPrefix + joinChar + identifyName + joinChar + filterEndfix
 }
 
 func getAfterFilterName(identifyName string) string {
-	identifyName = firstCharToUpper(identifyName)
 	return afterFilterPrefix + joinChar + identifyName + joinChar + filterEndfix
 }
 
 func getMethondInController(controller interface{}, methondName string) reflect.Value {
+	controllerName := reflect.ValueOf(controller).Type().Name()
+	key := controllerName + "_" + methondName
 	filtersCacheMutex.RLock()
-	m, ok := filtersCache[methondName]
+	m, ok := filtersCache[key]
 	filtersCacheMutex.RUnlock()
 	if !ok {
 		filtersCacheMutex.Lock()
 		m = reflect.ValueOf(controller).Elem().MethodByName(methondName)
-		filtersCache[methondName] = m
+		fmt.Println(m.IsValid())
+		filtersCache[key] = m
 		filtersCacheMutex.Unlock()
 	}
 	return m

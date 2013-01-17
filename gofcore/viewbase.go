@@ -3,10 +3,7 @@ package gofcore
 import (
 	"bytes"
 	"errors"
-	//"../models"
 	"fmt"
-	//"strconv"
-	//"net/http"
 )
 
 type ViewBase struct {
@@ -18,7 +15,6 @@ func (d *ViewBase) Writeout(out *bytes.Buffer, content interface{}) {
 }
 
 func (v *ViewBase) ErrorHandle(msg string) error {
-	fmt.Println(msg)
 	return errors.New(msg)
 }
 

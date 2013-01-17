@@ -26,7 +26,7 @@ func InvokeAction(context *HttpContext) {
 		actionName = getActionName(context, context.NoFoundActionName)
 		context.RouteName = strings.ToLower("/" + context.NoFoundControllerName + "/" + context.NoFoundActionName)
 	}
-	controller = GetController(controllerName)
+	//controller = GetController(controllerName)
 	if controller == nil {
 		return
 	}
@@ -81,7 +81,7 @@ func getActionName(context *HttpContext, originalActionName string) string {
 	} else if context.Request.Method == "POST" {
 		return postActionPrefix + actionName
 	}
-	fmt.Println(s)
+	// fmt.Println(s)
 	return s
 
 }

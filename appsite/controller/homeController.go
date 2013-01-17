@@ -2,7 +2,7 @@ package controller
 
 import (
 	//"bytes"
-	"fmt"
+	//"fmt"
 	"github.com/justinhuang917/gof/appsite/models"
 	"github.com/justinhuang917/gof/gofcore"
 )
@@ -15,33 +15,34 @@ type HomeController struct {
 	gofcore.ControllerBase
 }
 
-func (h *HomeController) Before_Controller_Filter(context *gofcore.HttpContext) {
+func (h HomeController) Before_Controller_Filter(context *gofcore.HttpContext) {
 	cid := context.GofSessionId
 	v := gofcore.SessionMgr.Get(cid, "username")
-	fmt.Println(v)
-	if v != nil && v.(string) == "justinhuang" {
-		h.RedirectToAction(context, "index")
+	if v == nil && context.ActionName != "login" {
+		h.RedirectToAction(context, "login")
 		return
 	}
 }
 
-func (h *HomeController) After_Controller_Filter(context *gofcore.HttpContext) {
+func (h HomeController) After_Controller_Filter(context *gofcore.HttpContext) {
 
 }
 
-func (h *HomeController) Before_GetIndex_Filter(context *gofcore.HttpContext) {
+func (h HomeController) Before_GetIndex_Filter(context *gofcore.HttpContext) {
 
 }
 
-func (h *HomeController) After_GetIndex_Fitler(context *gofcore.HttpContext) {
+func (h HomeController) After_GetIndex_Fitler(context *gofcore.HttpContext) {
 
 }
 
 func (h HomeController) GetIndex(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	cid := context.GofSessionId
-	v := gofcore.SessionMgr.Get(cid, "username")
+	//cid := context.GofSessionId
+	// v := gofcore.SessionMgr.Get(cid, "username")
 	v1 := gofcore.GetView(context.RouteName)
-	viewResult = gofcore.View(v1.(gofcore.IView), &models.User{v.(string), "", 100}, context)
+	// viewResult = gofcore.View(v1.(gofcore.IView), &models.User{v.(string), "", 100}, context)
+	viewResult = gofcore.View(v1.(gofcore.IView), &models.User{"justinhuang", "", 100}, context)
+
 	return
 }
 

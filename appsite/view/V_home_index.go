@@ -14,7 +14,7 @@ func init() {
 	gofcore.RegisterViews("/home/index", &V_home_index{})
 }
 
-func (d *V_home_index) Render(out *bytes.Buffer, m interface{}, viewBag gofcore.ViewBag, httpContext *gofcore.HttpContext) error {
+func (d *V_home_index) Render(out *bytes.Buffer, m interface{}, viewBag *gofcore.Bag, httpContext *gofcore.HttpContext) error {
 	if model, ok := m.(*models.User); ok {
 		model = model
 		_f := func() {

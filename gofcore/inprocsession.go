@@ -1,6 +1,7 @@
 package gofcore
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -29,6 +30,8 @@ func (i InProcSession) Get(name string) interface{} {
 func (i InProcSession) Set(name string, value interface{}) {
 	i.mutex.Lock()
 	i.innerMap[name] = value
+	fmt.Println("Set:", value)
+	fmt.Println("Values:", i.innerMap)
 	i.mutex.Unlock()
 }
 

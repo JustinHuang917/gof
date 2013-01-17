@@ -12,7 +12,7 @@ import (
 )
 
 type IView interface {
-	Render(out *bytes.Buffer, Model interface{}, ViewBag ViewBag, httpContext *HttpContext) error
+	Render(out *bytes.Buffer, Model interface{}, ViewBag *Bag, httpContext *HttpContext) error
 }
 
 type ViewMaps struct {
@@ -25,7 +25,7 @@ type ControllerMaps struct {
 	Controllers map[string]interface{}
 }
 
-var viewMaps *ViewMaps //= &ViewMaps{}
+var viewMaps *ViewMaps
 
 var controllerMaps *ControllerMaps
 
@@ -44,7 +44,6 @@ func RemoveView(routeName string) {
 
 func GetView(routeName string) interface{} {
 	defer viewMaps.mutex.RUnlock()
-	//fmt.Println(viewMaps.Views)
 	viewMaps.mutex.RLock()
 	return viewMaps.Views[routeName]
 }
@@ -72,24 +71,31 @@ type IHandler interface {
 	Handel(context *HttpContext)
 	Order() int
 }
-type ViewBag struct {
+type Bag struct {
 	Bags  map[string]interface{}
-	mutex sync.RWMutex
+	mutex *sync.RWMutex
 }
 
-func (v *ViewBag) Add(key string, value interface{}) {
+func NewBag() *Bag {
+	bag := new(Bag)
+	bag.Bags = make(map[string]interface{})
+	bag.mutex = new(sync.RWMutex)
+	return bag
+}
+
+func (v *Bag) Add(key string, value interface{}) {
 	v.mutex.Lock()
 	v.Bags[key] = value
 	v.mutex.Unlock()
 }
 
-func (v *ViewBag) Remove(key string) {
+func (v *Bag) Remove(key string) {
 	v.mutex.Lock()
 	delete(v.Bags, key)
 	v.mutex.Unlock()
 }
 
-func (v *ViewBag) Get(key string) interface{} {
+func (v *Bag) Get(key string) interface{} {
 	v.mutex.RLock()
 	defer v.mutex.RUnlock()
 	return v.Bags[key]
@@ -105,7 +111,8 @@ type HttpContext struct {
 	Request               *http.Request
 	ResponseWriter        http.ResponseWriter
 	RouteName             string
-	ViewBag               ViewBag
+	ViewBag               *Bag
+	RoutesData            *Bag
 	GofSessionId          string
 }
 
@@ -136,6 +143,8 @@ func initHttpContext(w http.ResponseWriter, r *http.Request) *HttpContext {
 	context.Request = r
 	context.RouteName = strings.ToLower("/" + context.ControllerName + "/" + context.ActionName)
 	context.GofSessionId = ""
+	context.ViewBag = NewBag()
+	context.RoutesData = NewBag()
 	return context
 }
 
@@ -194,8 +203,6 @@ func init() {
 func Handel(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	var context = initHttpContext(w, r)
-	//fmt.Println("context.ControllerName", context.ControllerName)
-	//fmt.Println("context.ActionName:", context.ActionName)
 	context.Request.ParseForm()
 	for _, handler := range innerHandlerList {
 		if handler != nil {

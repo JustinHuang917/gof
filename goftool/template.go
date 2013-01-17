@@ -17,7 +17,7 @@ func init() {
 	gofcore.RegisterViews("%v", &%v{})
 }
 
-func (d *%v) Render(out *bytes.Buffer, m interface{},viewBag gofcore.ViewBag, httpContext *gofcore.HttpContext) error {
+func (d *%v) Render(out *bytes.Buffer, m interface{},viewBag *gofcore.Bag, httpContext *gofcore.HttpContext) error {
 	if model, ok := m.(*%v); ok {
 	model = model
 		_f := func() {
@@ -51,7 +51,7 @@ func init() {
 	gofcore.RegisterViews("%v", &%v{})
 }
 
-func (d *%v) Render(out *bytes.Buffer, m interface{},viewBag gofcore.ViewBag, httpContext *gofcore.HttpContext) error {
+func (d *%v) Render(out *bytes.Buffer, m interface{},viewBag *gofcore.Bag, httpContext *gofcore.HttpContext) error {
 	if model, ok := m.(*%v); ok {
 	model = model
 		renderbody := func() {
