@@ -6,7 +6,7 @@
 	"GofSessionId": "_gofSessionId_",
 	"SessionMode":"InProc",
 	"EnableSession":true,
-	"SessionExpires":3600,
+	"SessionExpires":5,
 	"RoutesRule":{
 		"0":"/app/{controller}/{action}/{id}",
 		"1":"/app/Home/{controller}/{action}/{id}"

@@ -4,5 +4,11 @@
 	"DefaultPath":"home/index",
 	"NotFoundPath":"home/nofound",
 	"GofSessionId": "_gofSessionId_",
-	"SessionMode":"InProc"
+	"SessionMode":"InProc",
+	"EnableSession":true,
+	"SessionExpires":5,
+	"RoutesRule":{
+		"0":"/app/{controller}/{action}/{id}",
+		"1":"/app/Home/{controller}/{action}/{id}"
+	}
 }

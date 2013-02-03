@@ -1,6 +1,7 @@
 package gofcore
 
 import (
+	"fmt"
 	"github.com/justinhuang917/gof/gofcore/cfg"
 	"time"
 )
@@ -33,12 +34,14 @@ func InitialzieSeesion() {
 }
 
 func setTimeout(timeout time.Duration, name string) {
-	t := time.NewTimer(timeout)
-	go clearSession(t.C, name)
+	time.AfterFunc(timeout, func() {
+		fmt.Println("Trying to clear session:", name)
+		clearSession(name)
+	})
 }
 
-func clearSession(c <-chan time.Time, name string) {
-	//SessionMgr.Session.Remove(name)
+func clearSession(name string) {
+	SessionMgr.Session.Remove(name)
 }
 
 func (s *sessionManager) Get(sessionId, name string) interface{} {
@@ -48,8 +51,9 @@ func (s *sessionManager) Get(sessionId, name string) interface{} {
 func (s *sessionManager) Set(sessionId, name string, value interface{}) {
 	sname := sessionId + "_" + name
 	s.Session.Set(sname, value)
-	t := int64(sessionExpires * 1e9)
-	td := time.Duration(t)
+	t := int64(sessionExpires)
+	fmt.Println("t:", t)
+	td := time.Duration(sessionExpires) * time.Second
 	setTimeout(td, sname)
 }
 func (s *sessionManager) Remove(sessionId, name string) {

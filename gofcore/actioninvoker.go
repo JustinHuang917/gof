@@ -12,21 +12,20 @@ import (
 func InvokeAction(context *HttpContext) {
 	controllerName := context.ControllerName
 	controller := GetController(controllerName)
-	actionName := getActionName(context, context.ActionName)
+	actionName := getActionMethodName(context, context.ActionName)
 	var result []reflect.Value
 	if controller == nil {
 		controllerName = context.NoFoundControllerName
-		actionName = getActionName(context, context.NoFoundActionName)
+		actionName = getActionMethodName(context, context.NoFoundActionName)
 		context.RouteName = strings.ToLower("/" + context.NoFoundControllerName + "/" + context.NoFoundActionName)
 	}
 	controller = GetController(controllerName)
 	m := reflect.ValueOf(controller).Elem().MethodByName(actionName)
 	if !m.IsValid() {
 		controllerName = context.NoFoundControllerName
-		actionName = getActionName(context, context.NoFoundActionName)
+		actionName = getActionMethodName(context, context.NoFoundActionName)
 		context.RouteName = strings.ToLower("/" + context.NoFoundControllerName + "/" + context.NoFoundActionName)
 	}
-	//controller = GetController(controllerName)
 	if controller == nil {
 		return
 	}
@@ -53,7 +52,6 @@ func InvokeAction(context *HttpContext) {
 	if result != nil && len(result) > 0 {
 		vr := result[0].Interface().(*ViewResult)
 		if vr != nil {
-			// fmt.Println(result[0].Interface().(*ViewResult))
 			fmt.Fprintf(context.ResponseWriter, string(vr.Content.Bytes()))
 		}
 	}
@@ -65,23 +63,14 @@ const (
 )
 
 //Match the action name with action method name
-func getActionName(context *HttpContext, originalActionName string) string {
+func getActionMethodName(context *HttpContext, originalActionName string) string {
 	s := originalActionName
-	//First char to upercase eg:action=>Action
-	// actionName := strings.Map(func(c rune) rune {
-	// 	index++
-	// 	if index == 1 {
-	// 		return unicode.ToUpper(c)
-	// 	}
-	// 	return unicode.ToLower(c)
-	// }, s)
 	actionName := firstCharToUpper(s)
 	if context.Request.Method == "GET" {
 		return getActionPrefix + actionName
 	} else if context.Request.Method == "POST" {
 		return postActionPrefix + actionName
 	}
-	// fmt.Println(s)
 	return s
 
 }

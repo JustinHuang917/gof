@@ -37,12 +37,8 @@ func (h HomeController) After_GetIndex_Fitler(context *gofcore.HttpContext) {
 }
 
 func (h HomeController) GetIndex(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	//cid := context.GofSessionId
-	// v := gofcore.SessionMgr.Get(cid, "username")
 	v1 := gofcore.GetView(context.RouteName)
-	// viewResult = gofcore.View(v1.(gofcore.IView), &models.User{v.(string), "", 100}, context)
 	viewResult = gofcore.View(v1.(gofcore.IView), &models.User{"justinhuang", "", 100}, context)
-
 	return
 }
 
