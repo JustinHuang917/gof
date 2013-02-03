@@ -1,7 +1,6 @@
 package gofcore
 
 import (
-	"fmt"
 	"reflect"
 	"sync"
 )
@@ -71,7 +70,6 @@ func getMethondInController(controller interface{}, methondName string) reflect.
 	if !ok {
 		filtersCacheMutex.Lock()
 		m = reflect.ValueOf(controller).Elem().MethodByName(methondName)
-		fmt.Println(m.IsValid())
 		filtersCache[key] = m
 		filtersCacheMutex.Unlock()
 	}

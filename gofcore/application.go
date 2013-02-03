@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/justinhuang917/gof/gofcore/cfg"
 	"net/http"
+	"reflect"
 	"sort"
 	"strings"
 	"sync"
-	//"time"
 )
 
 type IView interface {
@@ -69,7 +69,6 @@ func GetController(controllerName string) interface{} {
 
 type IHandler interface {
 	Handel(context *HttpContext)
-	Order() int
 }
 type Bag struct {
 	Bags  map[string]interface{}
@@ -122,7 +121,6 @@ func initHttpContext(w http.ResponseWriter, r *http.Request) *HttpContext {
 	context := new(HttpContext)
 	path = strings.TrimLeft(path, cfg.AppConfig.AppPath)
 	path = "/" + path
-	fmt.Println("Path:", path)
 	arr := strings.Split(path, "/")
 	l := len(arr)
 	if l <= 1 {
@@ -157,7 +155,12 @@ func (h handlerList) Len() int {
 }
 
 func (h handlerList) Less(i, j int) bool {
-	return h[i].Order() < h[j].Order()
+	iName := GetFullNameFromType(reflect.TypeOf(h[i]))
+	jName := GetFullNameFromType(reflect.TypeOf(h[j]))
+	iOrder := cfg.AppConfig.HandlerSortings[iName]
+	jOrder := cfg.AppConfig.HandlerSortings[jName]
+	return iOrder < jOrder
+	//return h[i].Order() < h[j].Order()
 }
 
 func (h handlerList) Swap(i, j int) {
@@ -172,10 +175,13 @@ var (
 	noFoundActionName     string
 )
 
-func RegistHandler(handler IHandler) {
+func RegistHandler(handler IHandler, f func()) {
 	handlerListSyncMutex.Lock()
 	innerHandlerList = append(innerHandlerList, handler)
 	sort.Sort(innerHandlerList)
+	if f != nil {
+		f()
+	}
 	handlerListSyncMutex.Unlock()
 }
 
@@ -193,11 +199,16 @@ func init() {
 		noFoundControllerName = noFoundArr[0]
 		noFoundActionName = noFoundArr[1]
 	}
-	RegistHandler(&DefaultHandler{})
-	RegistHandler(&SessionHandler{})
-	if cfg.AppConfig.EnableSession {
-		InitialzieSeesion()
-	}
+	RegistHandler(&DefaultHandler{}, func() {
+		fmt.Println("Registered DefaultHandler")
+	})
+	RegistHandler(&SessionHandler{}, func() {
+		fmt.Println("Registered SessionHandler")
+		if cfg.AppConfig.EnableSession {
+			InitialzieSeesion()
+		}
+	})
+
 }
 
 func Handel(w http.ResponseWriter, r *http.Request) {
@@ -206,17 +217,12 @@ func Handel(w http.ResponseWriter, r *http.Request) {
 	context.Request.ParseForm()
 	for _, handler := range innerHandlerList {
 		if handler != nil {
-			fmt.Println("Handled......")
 			handler.Handel(context)
 		}
 	}
 }
 
 type DefaultHandler struct {
-}
-
-func (d *DefaultHandler) Order() int {
-	return 0
 }
 
 func (d *DefaultHandler) Handel(context *HttpContext) {
@@ -230,12 +236,8 @@ func (s *SessionHandler) Handel(context *HttpContext) {
 	if cfg.AppConfig.EnableSession {
 		sid := cfg.AppConfig.GofSessionId
 		ck, err := context.Request.Cookie(sid)
-		fmt.Println(context.Request.Cookies())
 		if err != nil || ck == nil || ck.Value == "" {
-			fmt.Println(ck)
 			expires := cfg.AppConfig.SessionExpires
-			fmt.Println(expires)
-			//d := time.Duration(expires)
 			cid, err1 := genUId()
 			if err1 == nil {
 				c := &http.Cookie{
@@ -257,8 +259,4 @@ func (s *SessionHandler) Handel(context *HttpContext) {
 		}
 	}
 
-}
-
-func (s *SessionHandler) Order() int {
-	return -1
 }

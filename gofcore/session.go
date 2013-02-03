@@ -51,8 +51,8 @@ func (s *sessionManager) Get(sessionId, name string) interface{} {
 func (s *sessionManager) Set(sessionId, name string, value interface{}) {
 	sname := sessionId + "_" + name
 	s.Session.Set(sname, value)
-	t := int64(sessionExpires)
-	fmt.Println("t:", t)
+	// t := int64(sessionExpires)
+	// fmt.Println("t:", t)
 	td := time.Duration(sessionExpires) * time.Second
 	setTimeout(td, sname)
 }

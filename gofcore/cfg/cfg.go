@@ -7,14 +7,15 @@ import (
 )
 
 type Config struct {
-	AppPath        string `json:"AppPath"`
-	Port           string `json:"Port"`
-	DefaultPath    string `json:"DefaultPath"`
-	NotFoundPath   string `json:"NotFoundPath"`
-	GofSessionId   string `json:GofSessionId`
-	SessionMode    string `json:SessionMode`
-	SessionExpires int    `json:SessionExpires`
-	EnableSession  bool   `json:EnableSession`
+	AppPath         string         `json:"AppPath"`
+	Port            string         `json:"Port"`
+	DefaultPath     string         `json:"DefaultPath"`
+	NotFoundPath    string         `json:"NotFoundPath"`
+	GofSessionId    string         `json:GofSessionId`
+	SessionMode     string         `json:SessionMode`
+	SessionExpires  int            `json:SessionExpires`
+	EnableSession   bool           `json:EnableSession`
+	HandlerSortings map[string]int `json:HandlerSortings`
 }
 
 var AppConfig *Config

@@ -10,5 +10,9 @@
 	"RoutesRule":{
 		"0":"/app/{controller}/{action}/{id}",
 		"1":"/app/Home/{controller}/{action}/{id}"
+	},
+	"HandlerSortings":{
+		"github.com/justinhuang917/gof/gofcore.SessionHandler": -1,
+		"github.com/justinhuang917/gof/gofcore.DefaultHandler": 0
 	}
 }

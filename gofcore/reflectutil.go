@@ -67,3 +67,25 @@ func CallMethod(m map[string]interface{}, name string, params ...interface{}) (r
 	result = f.Call(in)
 	return
 }
+
+func GetFullNameFromType(typ reflect.Type) string {
+	if typ == nil {
+		return ""
+	}
+	if typ.Kind() == reflect.Ptr {
+		elem := typ.Elem()
+		if elem == nil {
+			return ""
+		} else {
+			pkgName := elem.PkgPath()
+			typeName := elem.Name()
+			return pkgName + "." + typeName
+		}
+	} else {
+		pkgName := typ.PkgPath()
+		typeName := typ.Name()
+		return pkgName + "." + typeName
+	}
+	return ""
+
+}
