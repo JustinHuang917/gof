@@ -1,6 +1,6 @@
 @import "github.com/justinhuang917/gof/appsite/models"
 @model models.User
-@layout ./appsite/view/html/defaultrazor.layout
+@layout ./appsite/view/html/defaultrazor.rlayout
 
 
 <form action="./login" method="post">

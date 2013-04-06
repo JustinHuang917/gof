@@ -4,4 +4,5 @@ type User struct {
 	Name     string
 	Password string
 	Id       int
+	Age      int
 }

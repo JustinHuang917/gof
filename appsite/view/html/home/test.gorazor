@@ -1,0 +1,19 @@
+@import "github.com/justinhuang917/gof/appsite/models"
+@model models.User
+    <html>
+	<header></header>
+	<body>
+		@model models.User
+		 <div>
+		<lable>@Model.Name</lable>
+		<lable>@Model.Age</lable>
+		</div>
+
+		@{
+		   i:=0
+		 }     
+		@for i<10{
+			<div>@i</div>
+		}
+	</body>	
+</html>
