@@ -10,11 +10,7 @@ import (
 )
 
 func ToChars(s string) []rune {
-	var chars = make([]rune, 1, 10)
-	for _, c := range s {
-		chars = append(chars, c)
-	}
-	return chars
+	return []rune(s)
 }
 
 func ReadUntilToChar(start int, cs []rune, char rune) string {
