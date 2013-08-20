@@ -2,7 +2,7 @@
 @model models.User
 @layout ./appsite/view/html/defaultrazor.rlayout
 
-@helper func displayDiv(innertext string){
+@helper  displayDiv(innertext string){
 		<div>@innertext</div>
 	 }
 @{displayDiv("Wlecome"+model.Name)}

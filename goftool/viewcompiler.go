@@ -19,21 +19,11 @@ import (
 )
 
 const (
-	open_tag           = "<%"
-	close_tag          = "%>"
-	out_tag            = "="
-	end_server_tag     = "}"
-	import_tag         = "import"
-	model_declare_tag  = "model"
-	layout_declare_tag = "layout"
-	else_tag           = "}else{"
-	else_if_tag        = "}elseif{"
-	helper_tag         = "helper"
-	gohtml_ext         = ".gohtml"
-	gorazor_ext        = ".gorazor"
-	gorazorlayout_ext  = ".rlayout"
-	defaultModel       = "gofcore.NilModel"
-	viewDir            = "view/html"
+	gohtml_ext        = ".gohtml"
+	gorazor_ext       = ".gorazor"
+	gorazorlayout_ext = ".rlayout"
+	defaultModel      = "gofcore.NilModel"
+	viewDir           = "view/html"
 )
 
 var (
@@ -88,9 +78,9 @@ func NewCompiler(path, OutputPath string) (*Compiler, error) {
 func getParser(path string, content string) IParser {
 	extName := filepath.Ext(path)
 	if extName == gorazor_ext || extName == gorazorlayout_ext {
-		return razor.NewRazorParserEngine(content)
+		return razor.NewRazorParser(content)
 	}
-	return html.NewHtmlParserEngine(content)
+	return html.NewHtmlParser(content)
 }
 
 func (c *Compiler) Compile(needOutput bool) (err error) {

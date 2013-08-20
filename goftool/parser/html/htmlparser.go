@@ -30,7 +30,7 @@ func toChars(s string) []rune {
 	return chars
 }
 
-type HtmlParserEngine struct {
+type HtmlParser struct {
 	//ParserModel *ParserModel
 	src       []rune
 	srcString string
@@ -38,15 +38,15 @@ type HtmlParserEngine struct {
 	result    *parser.ParseResult
 }
 
-func NewHtmlParserEngine(content string) *HtmlParserEngine {
-	p := &HtmlParserEngine{}
+func NewHtmlParser(content string) *HtmlParser {
+	p := &HtmlParser{}
 	p.src = toChars(content)
 	p.srcString = content
 	p.result = &parser.ParseResult{}
 	return p
 }
 
-func (h *HtmlParserEngine) Parse() *parser.ParseResult {
+func (h *HtmlParser) Parse() *parser.ParseResult {
 	var result = ""
 	src := h.srcString //string(c.src)
 	for _, span := range strings.Split(src, open_tag) {
@@ -67,7 +67,7 @@ func (h *HtmlParserEngine) Parse() *parser.ParseResult {
 	return h.result
 }
 
-func (h *HtmlParserEngine) html(code string) string {
+func (h *HtmlParser) html(code string) string {
 	h.lineCount += len(strings.Split("\n", code))
 	code = strings.Replace(code, "\r", "\\r", -1)
 	code = strings.Replace(code, "\n", "\\n", -1)
@@ -77,7 +77,7 @@ func (h *HtmlParserEngine) html(code string) string {
 	return code
 }
 
-func (h *HtmlParserEngine) logic(code string) string {
+func (h *HtmlParser) logic(code string) string {
 	h.lineCount += len(strings.Split("\n", code))
 	keyword := h.getKeyword(code)
 	var parseFunc = h.getParseFunc(keyword)
@@ -86,7 +86,7 @@ func (h *HtmlParserEngine) logic(code string) string {
 	return code
 }
 
-func (h *HtmlParserEngine) getKeyword(code string) (keyword string) {
+func (h *HtmlParser) getKeyword(code string) (keyword string) {
 	ks := strings.Split(code, " ")
 	if strings.Index(code, out_tag) == 0 {
 		keyword = out_tag
@@ -107,7 +107,7 @@ func (h *HtmlParserEngine) getKeyword(code string) (keyword string) {
 	return
 }
 
-func (h *HtmlParserEngine) getParseFunc(keyword string) func(code string) string {
+func (h *HtmlParser) getParseFunc(keyword string) func(code string) string {
 	var parserFunc func(code string) string
 	switch {
 	case keyword == import_tag:
