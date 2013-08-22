@@ -121,6 +121,14 @@ type HttpContext struct {
 	GofSessionId          string
 }
 
+func (h *HttpContext) SetSession(key string, value interface{}) {
+	SessionMgr.Set(h.GofSessionId, key, value)
+}
+
+func (h *HttpContext) GetSession(key string) interface{} {
+	return SessionMgr.Get(h.GofSessionId, key)
+}
+
 func initHttpContext(w http.ResponseWriter, r *http.Request) *HttpContext {
 	url := r.URL
 	path := url.Path

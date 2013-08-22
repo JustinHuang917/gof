@@ -154,9 +154,6 @@ func (m *markupParser) nextTransition(source string) int {
 }
 
 func (m *markupParser) parseBlock(source string) {
-	// if source == null || len(source) == 0 {
-	// 	return
-	// }
 	var next = m.nextTransition(source)
 	if next == -1 {
 		m.parser.pushBlock("literal", source)
@@ -329,9 +326,6 @@ func (c *codeParser) parseBlock(source string) {
 }
 
 func (c *codeParser) parseCodeBlock(source string) {
-	// if len(source) == 0 {
-	// 	return
-	// }
 	end := c.endCodeBlock(source)
 	if end == -1 {
 		panic("Unterminated code block.")
@@ -342,9 +336,6 @@ func (c *codeParser) parseCodeBlock(source string) {
 }
 
 func (c *codeParser) parseLine(source string) {
-	// if source == null || source.length == -1 {
-	// 	return
-	// }
 	end := c.nextChar(source, '\n')
 	if end == -1 {
 		end = len(source) - 1

@@ -5,7 +5,8 @@
 package gofcore
 
 import (
-	"fmt"
+	// "fmt"
+	"io"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -55,7 +56,8 @@ func InvokeAction(context *HttpContext) {
 	if result != nil && len(result) > 0 {
 		vr := result[0].Interface().(*ViewResult)
 		if vr != nil {
-			fmt.Fprintf(context.ResponseWriter, string(vr.Content.Bytes()))
+			w := context.ResponseWriter.(io.Writer)
+			w.Write(vr.Content.Bytes())
 		}
 	}
 }

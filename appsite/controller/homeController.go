@@ -21,8 +21,7 @@ type HomeController struct {
 }
 
 func (h HomeController) Before_Controller_Filter(context *gofcore.HttpContext) {
-	cid := context.GofSessionId
-	v := gofcore.SessionMgr.Get(cid, "username")
+	v := context.GetSession("username")
 	if v == nil && context.ActionName != "login" {
 		h.RedirectToAction(context, "login")
 		return
@@ -49,8 +48,7 @@ func (h HomeController) GetIndex(context *gofcore.HttpContext) (viewResult *gofc
 
 func (h HomeController) PostLogin(context *gofcore.HttpContext, user models.User) (viewResult *gofcore.ViewResult) {
 	if user.Name == "justinhuang" && user.Password == "123" {
-		cid := context.GofSessionId
-		gofcore.SessionMgr.Set(cid, "username", "justinhuang")
+		context.SetSession("username", "justinhuang")
 		h.RedirectToAction(context, "index")
 	} else {
 		v := gofcore.GetView(context.RouteName)
