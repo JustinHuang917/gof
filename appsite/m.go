@@ -2,10 +2,10 @@ package main
 
 import (
 	//"fmt"
-	"github.com/justinhuang917/gof/appsite/controller"
-	"github.com/justinhuang917/gof/appsite/view"
-	"github.com/justinhuang917/gof/gofcore"
-	"github.com/justinhuang917/gof/gofcore/cfg"
+	"github.com/JustinHuang917/gof/appsite/controller"
+	"github.com/JustinHuang917/gof/appsite/view"
+	"github.com/JustinHuang917/gof/gofcore"
+	"github.com/JustinHuang917/gof/gofcore/cfg"
 	"log"
 	"net/http"
 )

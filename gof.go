@@ -7,7 +7,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/justinhuang917/gof/goftool"
+	"github.com/JustinHuang917/gof/goftool"
 	"strings"
 )
 

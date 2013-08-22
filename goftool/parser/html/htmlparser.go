@@ -5,7 +5,7 @@
 package html
 
 import (
-	"github.com/justinhuang917/gof/goftool/parser"
+	"github.com/JustinHuang917/gof/goftool/parser"
 	"strings"
 )
 

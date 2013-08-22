@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/justinhuang917/gof/appsite/models"
-	"github.com/justinhuang917/gof/gofcore"
+	"github.com/JustinHuang917/gof/appsite/models"
+	"github.com/JustinHuang917/gof/gofcore"
 )
 
 func init() {

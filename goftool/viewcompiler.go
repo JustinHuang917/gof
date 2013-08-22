@@ -7,9 +7,9 @@ package goftool
 import (
 	"errors"
 	"fmt"
-	"github.com/justinhuang917/gof/goftool/parser"
-	"github.com/justinhuang917/gof/goftool/parser/html"
-	"github.com/justinhuang917/gof/goftool/parser/razor"
+	"github.com/JustinHuang917/gof/goftool/parser"
+	"github.com/JustinHuang917/gof/goftool/parser/html"
+	"github.com/JustinHuang917/gof/goftool/parser/razor"
 	"io"
 	"io/ioutil"
 	"os"

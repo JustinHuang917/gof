@@ -8,7 +8,7 @@ var (
 	LayoutviewTemplate = `package view
 
 import (
-	"github.com/justinhuang917/gof/gofcore"
+	"github.com/JustinHuang917/gof/gofcore"
 	"bytes"
 	%v
 )
@@ -42,7 +42,7 @@ func (d *%v) Render(out *bytes.Buffer, m interface{},viewBag *gofcore.Bag, httpC
 package view
 	
 import (
-	"github.com/justinhuang917/gof/gofcore"
+	"github.com/JustinHuang917/gof/gofcore"
 	"bytes"
 	%v
 )

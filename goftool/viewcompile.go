@@ -7,7 +7,7 @@ package goftool
 // import (
 // 	"errors"
 // 	"fmt"
-// 	"github.com/justinhuang917/gof/goftool/razor"
+// 	"github.com/JustinHuang917/gof/goftool/razor"
 // 	"io"
 // 	"io/ioutil"
 // 	"os"
