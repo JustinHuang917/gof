@@ -1,6 +1,6 @@
 @import "github.com/JustinHuang917/gof/appsite/models"
 @model models.User
-    <html>
+<html>
 	<header></header>
 	<body>
 		@model models.User
@@ -8,7 +8,6 @@
 		<lable>@Model.Name</lable>
 		<lable>@Model.Age</lable>
 		</div>
-
 		@{
 		   i:=0
 		 }     

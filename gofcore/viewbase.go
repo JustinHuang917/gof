@@ -26,7 +26,11 @@ type ViewResult struct {
 	Content *bytes.Buffer
 }
 
-func View(v IView, model interface{}, context *HttpContext) (viewResult *ViewResult) {
+type JsonResult struct {
+}
+
+func View(model interface{}, context *HttpContext) (viewResult *ViewResult) {
+	v := GetView(context.RouteName).(IView)
 	viewResult = &ViewResult{Content: new(bytes.Buffer)}
 	v.Render(viewResult.Content, model, context.ViewBag, context)
 	return

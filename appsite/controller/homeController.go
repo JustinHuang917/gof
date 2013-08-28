@@ -6,14 +6,12 @@
 package controller
 
 import (
-	//"bytes"
-	//"fmt"
 	"github.com/JustinHuang917/gof/appsite/models"
 	"github.com/JustinHuang917/gof/gofcore"
 )
 
 func init() {
-	gofcore.RegiesterController("home", &HomeController{})
+	gofcore.RegisterController("home", &HomeController{})
 }
 
 type HomeController struct {
@@ -41,8 +39,7 @@ func (h HomeController) After_GetIndex_Fitler(context *gofcore.HttpContext) {
 }
 
 func (h HomeController) GetIndex(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	v1 := gofcore.GetView(context.RouteName)
-	viewResult = gofcore.View(v1.(gofcore.IView), &models.User{"justinhuang", "", 100, 25}, context)
+	viewResult = gofcore.View(&models.User{"justinhuang", "", 100, 25}, context)
 	return
 }
 
@@ -51,20 +48,17 @@ func (h HomeController) PostLogin(context *gofcore.HttpContext, user models.User
 		context.SetSession("username", "justinhuang")
 		h.RedirectToAction(context, "index")
 	} else {
-		v := gofcore.GetView(context.RouteName)
-		viewResult = gofcore.View(v.(gofcore.IView), &models.User{"", "", -1, 0}, context)
+		viewResult = gofcore.View(&models.User{"", "", -1, 0}, context)
 	}
 	return
 }
 
 func (h HomeController) GetLogin(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	v := gofcore.GetView(context.RouteName)
-	viewResult = gofcore.View(v.(gofcore.IView), &models.User{"JustinHuang", "", 100, 25}, context)
+	viewResult = gofcore.View(&models.User{"JustinHuang", "", 100, 25}, context)
 	return
 }
 
 func (h HomeController) GetNofound(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	v := gofcore.GetView(context.RouteName)
-	viewResult = gofcore.View(v.(gofcore.IView), gofcore.NullModel, context)
+	viewResult = gofcore.View(gofcore.NullModel, context)
 	return
 }

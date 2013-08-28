@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	gofcore.RegiesterController("order", &HomeController{})
+	gofcore.RegisterController("order", &HomeController{})
 }
 
 type OrderController struct {
@@ -14,8 +14,7 @@ type OrderController struct {
 }
 
 func (h OrderController) GetIndex(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	v := gofcore.GetView(context.RouteName)
-	viewResult = gofcore.View(v.(gofcore.IView), &models.User{"JustinHuang", "", 100, 25}, context)
+	viewResult = gofcore.View(&models.User{"JustinHuang", "", 100, 25}, context)
 	return
 }
 

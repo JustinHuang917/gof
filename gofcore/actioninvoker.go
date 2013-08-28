@@ -5,7 +5,6 @@
 package gofcore
 
 import (
-	// "fmt"
 	"io"
 	"net/url"
 	"reflect"
@@ -16,28 +15,16 @@ import (
 func InvokeAction(context *HttpContext) {
 	controllerName := context.ControllerName
 	controller := GetController(controllerName)
-	actionName := getActionMethodName(context, context.ActionName)
+	methodName := getActionMethodName(context, context.ActionName)
 	var result []reflect.Value
 	if controller == nil {
-		controllerName = context.NoFoundControllerName
-		actionName = getActionMethodName(context, context.NoFoundActionName)
-		context.RouteName = strings.ToLower("/" + context.NoFoundControllerName + "/" + context.NoFoundActionName)
-	}
-	controller = GetController(controllerName)
-	m := reflect.ValueOf(controller).Elem().MethodByName(actionName)
-	if !m.IsValid() {
-		controllerName = context.NoFoundControllerName
-		actionName = getActionMethodName(context, context.NoFoundActionName)
-		context.RouteName = strings.ToLower("/" + context.NoFoundControllerName + "/" + context.NoFoundActionName)
-	}
-	if controller == nil {
 		return
 	}
-	m = reflect.ValueOf(controller).Elem().MethodByName(actionName)
+	m := reflect.ValueOf(controller).Elem().MethodByName(methodName)
 	if !m.IsValid() {
 		return
 	}
-	InvokeBeforeFilters(controller, context, controllerName, actionName)
+	InvokeBeforeFilters(controller, context, controllerName, methodName)
 	if m.Type().NumIn() > 0 {
 		args := make([]reflect.Value, 1, 1)
 		args[0] = reflect.ValueOf(context)
@@ -52,7 +39,7 @@ func InvokeAction(context *HttpContext) {
 	} else {
 		result = m.Call(nil)
 	}
-	InvokeAfterFilters(controller, context, controllerName, actionName)
+	InvokeAfterFilters(controller, context, controllerName, methodName)
 	if result != nil && len(result) > 0 {
 		vr := result[0].Interface().(*ViewResult)
 		if vr != nil {
@@ -101,7 +88,6 @@ func bindModel(kv map[string]string, sv reflect.Value, prefix string, arrayIndex
 		var k string
 		if prefix == "" {
 			k = argName
-			//v = kv[argName]
 		} else {
 			k = prefix + "." + argName
 		}
@@ -111,9 +97,8 @@ func bindModel(kv map[string]string, sv reflect.Value, prefix string, arrayIndex
 		v, ok := kv[k]
 		if !ok {
 			flag = false
-		} //else {
+		}
 		kind := typeOfSV.Field(i).Type.Kind()
-		//fmt.Println(kind)
 		switch kind {
 		case reflect.String:
 			s := v

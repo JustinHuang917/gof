@@ -8,6 +8,6 @@ type NilModel struct{}
 
 var NullModel *NilModel
 
-func init() {
+func initModel() {
 	NullModel = &NilModel{}
 }

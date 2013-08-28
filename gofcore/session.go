@@ -5,10 +5,21 @@
 package gofcore
 
 import (
-	"fmt"
+	// "fmt"
 	"github.com/JustinHuang917/gof/gofcore/cfg"
 	"time"
 )
+
+type sessionManager struct {
+	Session       ISession
+	SessionIdName string
+}
+
+type ISession interface {
+	Get(name string) interface{}
+	Set(name string, value interface{})
+	Remove(name string)
+}
 
 var (
 	SessionMgr           sessionManager
@@ -16,7 +27,7 @@ var (
 	SessionIsInitialized bool
 )
 
-func init() {
+func initSession() {
 	SessionIsInitialized = false
 }
 func InitialzieSeesion() {
@@ -39,7 +50,8 @@ func InitialzieSeesion() {
 
 func setTimeout(timeout time.Duration, name string) {
 	time.AfterFunc(timeout, func() {
-		fmt.Println("Trying to clear session:", name)
+		Debug("Trying to clear session:"+name, Runtime)
+		//fmt.Println("Trying to clear session:", name)
 		clearSession(name)
 	})
 }
@@ -55,23 +67,10 @@ func (s *sessionManager) Get(sessionId, name string) interface{} {
 func (s *sessionManager) Set(sessionId, name string, value interface{}) {
 	sname := sessionId + "_" + name
 	s.Session.Set(sname, value)
-	// t := int64(sessionExpires)
-	// fmt.Println("t:", t)
 	td := time.Duration(sessionExpires) * time.Second
 	setTimeout(td, sname)
 }
 func (s *sessionManager) Remove(sessionId, name string) {
 	sname := sessionId + "_" + name
 	s.Session.Remove(sname)
-}
-
-type sessionManager struct {
-	Session       ISession
-	SessionIdName string
-}
-
-type ISession interface {
-	Get(name string) interface{}
-	Set(name string, value interface{})
-	Remove(name string)
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"fmt"
 	"github.com/JustinHuang917/gof/appsite/controller"
 	"github.com/JustinHuang917/gof/appsite/view"
 	"github.com/JustinHuang917/gof/gofcore"
@@ -13,7 +12,7 @@ import (
 func main() {
 	controller.Init()
 	view.Init()
-	http.HandleFunc(cfg.AppConfig.AppPath, gofcore.Handel)
+	http.HandleFunc(cfg.AppConfig.AppPath, gofcore.Handle)
 	err := http.ListenAndServe(cfg.AppConfig.Port, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

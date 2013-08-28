@@ -1,20 +1,19 @@
 package razor
 
 import (
-	//"fmt"
 	"github.com/JustinHuang917/gof/goftool/parser"
 	"strings"
 )
 
 var (
-	literalType        = "literal"
-	codeType           = "code"
-	expressionType     = "expression"
-	import_tag         = "model"
-	helper_tag         = "helper"
-	layout_declare_tag = "layout"
-	model_declare_tag  = "import"
-	codeKeywords       = []string{"if", "for", "else"}
+	literalType      = "literal"
+	codeType         = "code"
+	expressionType   = "expression"
+	importTag        = "model"
+	helperTag        = "helper"
+	layoutDeclareTag = "layout"
+	modelDeclareTag  = "import"
+	codeKeywords     = []string{"if", "for", "else"}
 )
 
 type Block struct {
@@ -281,7 +280,6 @@ func (c *codeParser) acceptIdentifier(source string) string {
 	}
 	output := ""
 	for i, cur := range source {
-		//cur := rune(source[i])
 		cde := int(cur)
 		if i == 0 {
 			if cde == 36 || cde == 95 || (cde >= 65 && cde <= 90) || (cde >= 97 && cde <= 122) { // $_A-Za-z
@@ -353,14 +351,14 @@ func (c *codeParser) parseExpression(source string) {
 	if expr == "" {
 		c.parser.parseMarkupBlcok(block)
 	} else {
-		if expr == helper_tag {
+		if expr == helperTag {
 			c.parseHelper(source)
-		} else if expr == import_tag {
+		} else if expr == importTag {
 			c.parseModelDec(source)
-		} else if expr == model_declare_tag {
+		} else if expr == modelDeclareTag {
 			c.parseImportDec(source)
 
-		} else if expr == layout_declare_tag {
+		} else if expr == layoutDeclareTag {
 			c.parseLayoutDec(source)
 		} else {
 			c.parser.pushBlock(expressionType, expr)
@@ -382,7 +380,6 @@ func (c *codeParser) parseExpressionBlock(source string) {
 	nextScope := c.nextChar(source, '{')
 	if nextScope > -1 {
 		identifier := strings.Split(source[1:], " ")[0]
-		//fmt.Println("identifier:", identifier)
 		if c.isKeyword(identifier) {
 			c.parseKeyword(identifier, source)
 			return
@@ -508,26 +505,26 @@ func (c *codeParser) parseHelper(source string) {
 }
 
 func (c *codeParser) parseModelDec(source string) {
-	end, dec := c.parseDeclaration(source, import_tag)
+	end, dec := c.parseDeclaration(source, importTag)
 	c.parser.Declaration.modelName = dec
 	c.parser.parseMarkupBlcok(source[end+1:])
 }
 
 func (c *codeParser) parseImportDec(source string) {
-	end, dec := c.parseDeclaration(source, model_declare_tag)
+	end, dec := c.parseDeclaration(source, modelDeclareTag)
 	c.parser.Declaration.imports = strings.Split(dec, ",")
 	c.parser.parseMarkupBlcok(source[end+1:])
 }
 
 func (c *codeParser) parseLayoutDec(source string) {
-	end, dec := c.parseDeclaration(source, layout_declare_tag)
+	end, dec := c.parseDeclaration(source, layoutDeclareTag)
 	c.parser.Declaration.layout = dec
 	c.parser.parseMarkupBlcok(source[end+1:])
 }
 
 func (c *codeParser) parseDeclaration(source, decName string) (end int, dec string) {
 	end = c.nextChar(source, '\n')
-	l := len(layout_declare_tag) + 1
+	l := len(layoutDeclareTag) + 1
 	dec = source[l:end]
 	dec = strings.TrimSpace(dec)
 	return

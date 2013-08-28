@@ -11,21 +11,24 @@ import (
 )
 
 type Config struct {
-	AppPath         string         `json:"AppPath"`
+	//Listen Ptah
+	AppPath string `json:"AppPath"`
+	//Listen Port
 	Port            string         `json:"Port"`
-	DefaultPath     string         `json:"DefaultPath"`
-	NotFoundPath    string         `json:"NotFoundPath"`
 	GofSessionId    string         `json:GofSessionId`
 	SessionMode     string         `json:SessionMode`
 	SessionExpires  int            `json:SessionExpires`
 	EnableSession   bool           `json:EnableSession`
+	DebugMode       string         `json:DebugMode`
 	HandlerSortings map[string]int `json:HandlerSortings`
+	RouteRules      map[string]int `json:RouteRules`
+	//Special Settings
+	AppSettings map[string]string `json:AppSettings`
 }
 
 var AppConfig *Config
 
 func init() {
-	fmt.Println("Init Config")
 	err := load("./cfg.json")
 	if err != nil {
 		fmt.Println("Init Config Error:", err)
@@ -38,12 +41,10 @@ func load(cfgPath string) error {
 	}
 	AppConfig = &Config{}
 	dec := json.NewDecoder(file)
-	//fmt.Println(dec)
 	if err = dec.Decode(AppConfig); err != nil {
 		fmt.Println(err)
 		return err
 	}
 	fmt.Println(AppConfig)
-	//fmt.Println(AppConfig)
 	return nil
 }

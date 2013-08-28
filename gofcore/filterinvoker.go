@@ -21,7 +21,7 @@ var (
 	filtersCacheMutex *sync.RWMutex
 )
 
-func init() {
+func initInvoker() {
 	filtersCache = make(map[string]reflect.Value, 0)
 	filtersCacheMutex = new(sync.RWMutex)
 }

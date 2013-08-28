@@ -20,11 +20,6 @@ var (
 
 func main() {
 	flag.Parse()
-	// fmt.Println(*action)
-	// var arg0 string
-	// if flag.NArg() > 0 {
-	// 	arg0 = flag.Arg(0)
-	// }
 	switch {
 	case *action == "compileview":
 		otherArgs := make([]string, 0, 0)
@@ -32,7 +27,6 @@ func main() {
 		if *others != "" {
 			otherArgs = strings.Split(*others, ",")
 		}
-		//	fmt.Println(otherArgs[0])
 		err := goftool.Compile(*viewpath, *outviewpath, otherArgs...)
 		if err != nil {
 			fmt.Println(err)

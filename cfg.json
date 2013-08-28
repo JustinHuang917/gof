@@ -1,17 +1,17 @@
 {
 	"AppPath":"/app/",
 	"Port":":9999",
-	"DefaultPath":"home/index",
-	"NotFoundPath":"home/nofound",
 	"GofSessionId": "_gofSessionId_",
 	"SessionMode":"InProc",
 	"EnableSession":true,
 	"SessionExpires":60,
-	"RoutesRule":{
-		"0":"/app/{controller}/{action}/{id}",
-		"1":"/app/Home/{controller}/{action}/{id}"
+	"DebugMode":"runtime",
+	"RouteRules":{
+		"/app/{controller:home}/{action:index}/{id:0}":0,
+		"/app/Home/{action:index}/{id:0}":1
 	},
 	"HandlerSortings":{
+		"github.com/JustinHuang917/gof/gofcore.RouterHandler": -2,		
 		"github.com/JustinHuang917/gof/gofcore.SessionHandler": -1,
 		"github.com/JustinHuang917/gof/gofcore.DefaultHandler": 0
 	}

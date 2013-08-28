@@ -45,3 +45,23 @@ func firstCharToUpper(s string) string {
 	}, s)
 	return s1
 }
+
+func indexOfString(originalStr, str string, startIndex int) int {
+	l := len(originalStr)
+	if l == 0 {
+		return -1
+	}
+	index := 0
+	if startIndex == 0 {
+		index = strings.Index(originalStr, str)
+	} else {
+		tempStr := originalStr[startIndex:]
+		tempIndex := strings.Index(tempStr, str)
+		if tempIndex == -1 {
+			return -1
+		} else {
+			index = tempIndex + startIndex
+		}
+	}
+	return index
+}
