@@ -19,6 +19,7 @@ func (d *ViewBase) Writeout(out *bytes.Buffer, content interface{}) {
 }
 
 func (v *ViewBase) ErrorHandle(msg string) error {
+	fmt.Println(msg)
 	return errors.New(msg)
 }
 

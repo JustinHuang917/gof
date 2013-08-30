@@ -110,7 +110,12 @@ func (v *Bag) Remove(key string) {
 func (v *Bag) Get(key string) interface{} {
 	v.mutex.RLock()
 	defer v.mutex.RUnlock()
-	return v.Bags[key]
+	value, ok := v.Bags[key]
+	if ok {
+		return value
+	} else {
+		return nil
+	}
 }
 
 type HttpContext struct {

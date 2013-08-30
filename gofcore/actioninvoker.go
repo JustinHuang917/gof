@@ -5,7 +5,10 @@
 package gofcore
 
 import (
+	//"errros"
+	"fmt"
 	"io"
+	"net/http"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -13,6 +16,11 @@ import (
 )
 
 func InvokeAction(context *HttpContext) {
+	defer func() {
+		if ex := recover(); ex != nil {
+			http.Error(context.ResponseWriter, fmt.Sprintf("%v", ex), http.StatusInternalServerError)
+		}
+	}()
 	controllerName := context.ControllerName
 	controller := GetController(controllerName)
 	methodName := getActionMethodName(context, context.ActionName)
@@ -105,8 +113,49 @@ func bindModel(kv map[string]string, sv reflect.Value, prefix string, arrayIndex
 			f.SetString(s)
 			break
 		case reflect.Int:
-			n, _ := strconv.ParseInt(v, 10, 64)
-			f.SetInt(n)
+			if n, err := strconv.ParseInt(v, 10, 32); err == nil {
+				f.SetInt(n)
+			}
+			break
+		case reflect.Int8:
+			if n, err := strconv.ParseInt(v, 10, 8); err == nil {
+				f.SetInt(n)
+			}
+			break
+		case reflect.Int16:
+			if n, err := strconv.ParseInt(v, 10, 16); err == nil {
+				f.SetInt(n)
+			}
+			break
+		case reflect.Int32:
+			if n, err := strconv.ParseInt(v, 10, 32); err == nil {
+				f.SetInt(n)
+			}
+			break
+		case reflect.Int64:
+			if n, err := strconv.ParseInt(v, 10, 64); err == nil {
+				f.SetInt(n)
+			}
+			break
+		case reflect.Float32:
+			if n, err := strconv.ParseFloat(v, 32); err == nil {
+				f.SetFloat(n)
+			}
+			break
+		case reflect.Float64:
+			if n, err := strconv.ParseFloat(v, 64); err == nil {
+				f.SetFloat(n)
+			}
+			break
+		case reflect.Bool:
+			if b, err := strconv.ParseBool(v); err == nil {
+				f.SetBool(b)
+			}
+			break
+		case reflect.Uint32:
+			if i, err := strconv.ParseUint(v, 10, 32); err == nil {
+				f.SetUint(i)
+			}
 			break
 		case reflect.Array, reflect.Slice:
 			keyPrefix := k + "["

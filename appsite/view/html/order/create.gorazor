@@ -1,0 +1,11 @@
+@import "github.com/JustinHuang917/gof/appsite/models"
+@model *models.Order
+@layout ./appsite/view/html/defaultrazor.rlayout
+
+<form action="./create" method="post">
+	<div>
+		OrderBy:<input type="text" id="txtOrderBy" name="OrderBy"/>
+		Amount:<input type="text" id="txtAmount" name="Amount"/>
+		<input type="Submit" value="Submit"/>
+	</div>
+</form>

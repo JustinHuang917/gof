@@ -1,0 +1,11 @@
+@import "github.com/JustinHuang917/gof/appsite/models"
+@model *models.Order
+@layout ./appsite/view/html/defaultrazor.rlayout
+
+<div>
+	<div>OrderNo:@model.OrderNo</div>
+	<div>OrderBy:@model.OrderBy</div>
+	<div>Amount:@model.Amount</div>
+</div>
+
+<a href="@(gofcore.UrlControllerAction("Order","Index",nil))">Order Home<a>

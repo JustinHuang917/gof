@@ -1,5 +1,5 @@
 {
-	"AppPath":"/app/",
+	"AppPath":"/",
 	"Port":":9999",
 	"GofSessionId": "_gofSessionId_",
 	"SessionMode":"InProc",
@@ -7,8 +7,8 @@
 	"SessionExpires":60,
 	"DebugMode":"runtime",
 	"RouteRules":{
-		"/app/{controller:home}/{action:index}/{id:0}":0,
-		"/app/Home/{action:index}/{id:0}":1
+		"/{controller:home}/{action:index}/{id:0}":0,
+		"/Home/{action:index}/{id:0}":1
 	},
 	"HandlerSortings":{
 		"github.com/JustinHuang917/gof/gofcore.RouterHandler": -2,		

@@ -101,7 +101,9 @@ func (p *RazorParser) parseBlock(b Block) string {
 func (p *RazorParser) Parse() *parser.ParseResult {
 	p.markupParser.parseBlock(p.source)
 	result := &parser.ParseResult{}
-	result.Imports = strings.Join(p.Declaration.imports, "\n")
+	if p.Declaration.imports != nil {
+		result.Imports = strings.Join(p.Declaration.imports, "\n")
+	}
 	result.LayoutPath = p.Declaration.layout
 	result.ModelTypeName = p.Declaration.modelName
 	result.OutPutContent = p.genRazorOutput()
@@ -512,7 +514,10 @@ func (c *codeParser) parseModelDec(source string) {
 
 func (c *codeParser) parseImportDec(source string) {
 	end, dec := c.parseDeclaration(source, modelDeclareTag)
-	c.parser.Declaration.imports = strings.Split(dec, ",")
+	if c.parser.Declaration.imports == nil {
+		c.parser.Declaration.imports = make([]string, 0, 2)
+	}
+	c.parser.Declaration.imports = append(c.parser.Declaration.imports, dec) //= strings.Split(dec, ",")
 	c.parser.parseMarkupBlcok(source[end+1:])
 }
 

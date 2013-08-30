@@ -1,0 +1,19 @@
+@import "github.com/JustinHuang917/gof/appsite/models"
+@model []*models.Order
+@layout ./appsite/view/html/defaultrazor.rlayout
+
+<table>
+	<tr>
+		<th>OrderNo</th>
+		<th>OrderBy</th>
+		<th>Amount</th>
+	</tr>
+	@for _,order:=range model{
+		<tr>
+			<td><a href="@(gofcore.UrlControllerAction("Order","Order",map[string]string{"id":order.OrderNo}))">@order.OrderNo</a></td>
+			<td>@order.OrderBy</td>
+			<td>@order.Amount</td>
+		</tr>
+	}
+	<a href="@(gofcore.UrlControllerAction("Order","Create",nil))">Create Order</a>
+</table>

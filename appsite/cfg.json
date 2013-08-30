@@ -1,5 +1,5 @@
 {
-	"AppPath":"/app/",
+	"AppPath":"/",
 	"Port":":9999",
 	"GofSessionId": "_gofSessionId_",
 	"SessionMode":"InProc",

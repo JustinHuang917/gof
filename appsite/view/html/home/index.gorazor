@@ -1,4 +1,5 @@
 @import "github.com/JustinHuang917/gof/appsite/models"
+
 @model models.User
 @layout ./appsite/view/html/defaultrazor.rlayout
 

@@ -1,4 +1,4 @@
 #!/bin/sh
 apppath=./appsite
-./build.sh
+#./build.sh
 ${apppath}/m

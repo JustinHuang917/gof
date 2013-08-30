@@ -82,11 +82,22 @@ func (r *RouterHandler) Handle(context *HttpContext) {
 			context.RoutesData.Add(k, v)
 		}
 	}
+	//merge query string to route data
+	r.mergeRouteDataAndQueryString(context)
 	context.RouteName = strings.ToLower("/" + context.ControllerName + "/" + context.ActionName)
 	Debug(context.ControllerName, Runtime)
 	Debug(context.ActionName, Runtime)
 	Debug(context.RouteName, Runtime)
-
+}
+func (r *RouterHandler) mergeRouteDataAndQueryString(context *HttpContext) {
+	req := context.Request
+	queryValues := req.URL.Query()
+	for k, _ := range queryValues {
+		//value in querystring will replace value in routermatched
+		if k != "controller" && k != "action" {
+			context.RoutesData.Add(k, queryValues.Get(k))
+		}
+	}
 }
 
 type DefaultHandler struct {

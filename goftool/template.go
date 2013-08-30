@@ -22,7 +22,7 @@ func init() {
 }
 
 func (d *%v) Render(out *bytes.Buffer, m interface{},viewBag *gofcore.Bag, httpContext *gofcore.HttpContext) error {
-	if model, ok := m.(*%v); ok {
+	if model, ok := m.(%v); ok {
 	model = model
 		_f := func() {
 			renderbody:=func(){
@@ -32,7 +32,7 @@ func (d *%v) Render(out *bytes.Buffer, m interface{},viewBag *gofcore.Bag, httpC
 		}
 		_f()
 	 } else {
-		errMsg := "The type of model not mtahched"
+		errMsg := "The type of model not matched"
 		return d.ErrorHandle(errMsg)
 	}
 	return nil
@@ -56,14 +56,14 @@ func init() {
 }
 
 func (d *%v) Render(out *bytes.Buffer, m interface{},viewBag *gofcore.Bag, httpContext *gofcore.HttpContext) error {
-	if model, ok := m.(*%v); ok {
+	if model, ok := m.(%v); ok {
 	model = model
 		renderbody := func() {
 			%v
 		}
 		renderbody()
 	} else {
-		errMsg := "The type of model not matchched"
+		errMsg := "The type of model not matched"
 		return d.ErrorHandle(errMsg)
 	}
 	return nil
