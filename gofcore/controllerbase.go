@@ -6,16 +6,11 @@ package gofcore
 
 import (
 	"bytes"
+	"encoding/json"
 	"net/http"
 )
 
 type ControllerBase struct {
-}
-
-func (c *ControllerBase) View(v IView, model interface{}, context *HttpContext) (viewResult *ViewResult) {
-	viewResult = &ViewResult{Content: new(bytes.Buffer)}
-	v.Render(viewResult.Content, model, context.ViewBag, context)
-	return
 }
 
 func (c *ControllerBase) RedirectToAction(context *HttpContext, actionName string) {
@@ -39,16 +34,24 @@ func (c *ControllerBase) RedirectToControllerActionWithRouteData(context *HttpCo
 }
 
 func (c *ControllerBase) generateUrl(controllerName string, actionName string, values map[string]string) string {
-	// url := cfg.AppConfig.AppPath + "/" + controllerName + "/" + actionName
-	// if values != nil {
-	// 	args := make([]string, 0, len(values))
-	// 	for k, v := range values {
-	// 		kvStr := fmt.Sprintf("%s=%s", k, v)
-	// 		args = append(args, kvStr)
-	// 	}
-	// 	queryString := strings.Join(args, "&")
-	// 	url = fmt.Sprintf("%s?%s", url, queryString)
-	// }
-	// return url
 	return UrlControllerAction(controllerName, actionName, values)
+}
+
+func (c *ControllerBase) View(model interface{}, context *HttpContext) (viewResult *ViewResult) {
+	v := GetView(context.RouteName).(IView)
+	viewResult = &ViewResult{Content: new(bytes.Buffer)}
+	err := v.Render(viewResult.Content, model, context.ViewBag, context)
+	if err != nil {
+		panic(err.Error())
+	}
+	return
+}
+
+func (c *ControllerBase) Json(model interface{}, context *HttpContext) (jsonResult *JsonResult) {
+	if bytes, err := json.Marshal(model); err == nil {
+		jsonResult = &JsonResult{Content: bytes}
+	} else {
+		panic(err.Error())
+	}
+	return jsonResult
 }

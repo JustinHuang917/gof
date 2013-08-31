@@ -41,7 +41,7 @@ func (h HomeController) After_GetIndex_Fitler(context *gofcore.HttpContext) {
 }
 
 func (h HomeController) GetIndex(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	viewResult = gofcore.View(*&models.User{"justinhuang", "", 100, 25}, context)
+	viewResult = h.View(*&models.User{"justinhuang", "", 100, 25}, context)
 	return
 }
 
@@ -50,18 +50,18 @@ func (h HomeController) PostLogin(context *gofcore.HttpContext, user models.User
 		context.SetSession("username", "justinhuang")
 		h.RedirectToAction(context, "index")
 	} else {
-		viewResult = gofcore.View(*&models.User{"", "", -1, 0}, context)
+		viewResult = h.View(*&models.User{"", "", -1, 0}, context)
 	}
 	return
 }
 
 func (h HomeController) GetLogin(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
 	fmt.Println("login...")
-	viewResult = gofcore.View(*&models.User{"JustinHuang", "", 100, 25}, context)
+	viewResult = h.View(*&models.User{"JustinHuang", "", 100, 25}, context)
 	return
 }
 
 func (h HomeController) GetNofound(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	viewResult = gofcore.View(gofcore.NullModel, context)
+	viewResult = h.View(gofcore.NullModel, context)
 	return
 }

@@ -5,10 +5,10 @@
 	"SessionMode":"InProc",
 	"EnableSession":true,
 	"SessionExpires":60,
-	"DebugMode":"runtime",
+	"DebugMode":"any",
 	"RouteRules":{
 		"/{controller:home}/{action:index}/{id:0}":0,
-		"/Home/{action:index}/{id:0}":1
+		"/Order/{action:Order}/{id:0}":1
 	},
 	"HandlerSortings":{
 		"github.com/JustinHuang917/gof/gofcore.RouterHandler": -2,		

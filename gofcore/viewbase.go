@@ -22,17 +22,3 @@ func (v *ViewBase) ErrorHandle(msg string) error {
 	fmt.Println(msg)
 	return errors.New(msg)
 }
-
-type ViewResult struct {
-	Content *bytes.Buffer
-}
-
-type JsonResult struct {
-}
-
-func View(model interface{}, context *HttpContext) (viewResult *ViewResult) {
-	v := GetView(context.RouteName).(IView)
-	viewResult = &ViewResult{Content: new(bytes.Buffer)}
-	v.Render(viewResult.Content, model, context.ViewBag, context)
-	return
-}

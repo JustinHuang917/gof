@@ -19,26 +19,37 @@ func (c OrderController) GetIndex(context *gofcore.HttpContext) (viewResult *gof
 	if orders == nil {
 		orders = make([]*models.Order, 0, 0)
 	}
-	viewResult = gofcore.View(orders, context)
+	viewResult = c.View(orders, context)
 	return
 }
 
 func (c OrderController) GetOrder(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	fmt.Println(context.RoutesData)
 	idValue := context.RoutesData.Get("id")
 	if id, ok := (idValue).(string); ok {
 		order := models.GetOrder(id)
 		if order == nil {
 			panic("Order not exsited")
 		}
-		viewResult = gofcore.View(order, context)
+		viewResult = c.View(order, context)
 	}
 	return
 }
 
+func (c OrderController) GetJsonorder(context *gofcore.HttpContext) (jsonResult *gofcore.JsonResult) {
+	fmt.Println("get json")
+	idValue := context.RoutesData.Get("id")
+	if id, ok := (idValue).(string); ok {
+		order := models.GetOrder(id)
+		if order == nil {
+			panic("Order not exsited")
+		}
+		jsonResult = c.Json(order, context)
+	}
+	return
+}
 func (c OrderController) GetCreate(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
 	m := &models.Order{}
-	viewResult = gofcore.View(m, context)
+	viewResult = c.View(m, context)
 	return
 }
 

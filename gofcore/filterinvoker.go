@@ -67,7 +67,6 @@ func getAfterFilterName(identifyName string) string {
 
 func getMethondInController(controller interface{}, methondName string) reflect.Value {
 	controllerName := reflect.ValueOf(controller).Type().String()
-	// fmt.Println("filter controllerName", controllerName)
 	key := controllerName + "_" + methondName
 	filtersCacheMutex.RLock()
 	m, ok := filtersCache[key]

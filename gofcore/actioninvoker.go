@@ -5,9 +5,7 @@
 package gofcore
 
 import (
-	//"errros"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -24,6 +22,7 @@ func InvokeAction(context *HttpContext) {
 	controllerName := context.ControllerName
 	controller := GetController(controllerName)
 	methodName := getActionMethodName(context, context.ActionName)
+	fmt.Println("methodName:", methodName)
 	var result []reflect.Value
 	if controller == nil {
 		return
@@ -49,10 +48,12 @@ func InvokeAction(context *HttpContext) {
 	}
 	InvokeAfterFilters(controller, context, controllerName, methodName)
 	if result != nil && len(result) > 0 {
-		vr := result[0].Interface().(*ViewResult)
-		if vr != nil {
-			w := context.ResponseWriter.(io.Writer)
-			w.Write(vr.Content.Bytes())
+		if ar, ok := result[0].Interface().(IActionResult); ok {
+			if ar != nil {
+				ar.Invoke(context)
+			}
+		} else {
+			panic("unknown action result type")
 		}
 	}
 }
