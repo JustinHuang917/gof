@@ -1,7 +1,7 @@
 gof
 ===
 
-GOF: The  mvc web framework using Go
+GOF: A Go (golang)  web mvc framework
 
 ###Model
 ``` go
