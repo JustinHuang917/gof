@@ -6,7 +6,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/JustinHuang917/gof/appsite/models"
 	"github.com/JustinHuang917/gof/gofcore"
 )
@@ -20,7 +19,6 @@ type HomeController struct {
 }
 
 func (h HomeController) Before_Controller_Filter(context *gofcore.HttpContext) {
-	fmt.Println("filter...")
 	v := context.GetSession("username")
 	if v == nil && context.ActionName != "login" {
 		h.RedirectToAction(context, "login")
@@ -56,7 +54,6 @@ func (h HomeController) PostLogin(context *gofcore.HttpContext, user models.User
 }
 
 func (h HomeController) GetLogin(context *gofcore.HttpContext) (viewResult *gofcore.ViewResult) {
-	fmt.Println("login...")
 	viewResult = h.View(*&models.User{"JustinHuang", "", 100, 25}, context)
 	return
 }

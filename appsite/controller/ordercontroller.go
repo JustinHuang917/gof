@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/JustinHuang917/gof/appsite/models"
 	"github.com/JustinHuang917/gof/gofcore"
 )
@@ -36,7 +35,6 @@ func (c OrderController) GetOrder(context *gofcore.HttpContext) (viewResult *gof
 }
 
 func (c OrderController) GetJsonorder(context *gofcore.HttpContext) (jsonResult *gofcore.JsonResult) {
-	fmt.Println("get json")
 	idValue := context.RoutesData.Get("id")
 	if id, ok := (idValue).(string); ok {
 		order := models.GetOrder(id)

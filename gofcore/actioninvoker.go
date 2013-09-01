@@ -22,7 +22,6 @@ func InvokeAction(context *HttpContext) {
 	controllerName := context.ControllerName
 	controller := GetController(controllerName)
 	methodName := getActionMethodName(context, context.ActionName)
-	fmt.Println("methodName:", methodName)
 	var result []reflect.Value
 	if controller == nil {
 		return

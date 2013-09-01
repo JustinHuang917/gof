@@ -51,7 +51,6 @@ func InitialzieSeesion() {
 func setTimeout(timeout time.Duration, name string) {
 	time.AfterFunc(timeout, func() {
 		Debug("Trying to clear session:"+name, Runtime)
-		//fmt.Println("Trying to clear session:", name)
 		clearSession(name)
 	})
 }
