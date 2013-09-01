@@ -4,6 +4,56 @@ gof
 
 GOF: The golang mvc web framework 
 
+
+###View(Using Razor Template)
+
+define layout page
+
+filename: *.rlayout
+
+``` go
+<html>
+	<body>
+		<div>
+			@{renderbody()}
+		</div>
+	<body>
+</html>
+```
+
+order browser page:
+
+* fileame format: *.gorazor
+
+* using static type model & layout
+
+``` go
+
+@import "github.com/JustinHuang917/gof/appsite/models"
+@model *models.Order
+@layout ./appsite/view/html/defaultrazor.rlayout
+
+<div>
+	<div>OrderNo:@model.OrderNo</div>
+	<div>OrderBy:@model.OrderBy</div>
+	<div>Amount:@model.Amount</div>
+</div>
+```
+create order page:
+``` go
+@import "github.com/JustinHuang917/gof/appsite/models"
+@model *models.Order
+@layout ./appsite/view/html/defaultrazor.rlayout
+
+<form action="./create" method="post">
+	<div>
+		OrderBy:<input type="text" id="txtOrderBy" name="OrderBy"/>
+		Amount:<input type="text" id="txtAmount" name="Amount"/>
+		<input type="Submit" value="Submit"/>
+	</div>
+</form>
+```
+
 ###Model
 ``` go
 type Order struct {
@@ -74,56 +124,6 @@ func (c OrderController) PostCreate(context *gofcore.HttpContext, order models.O
 	return
 }
 
-```
-
-
-###View(Using Razor Template)
-
-define layout page
-
-filename: *.rlayout
-
-``` go
-<html>
-	<body>
-		<div>
-			@{renderbody()}
-		</div>
-	<body>
-</html>
-```
-
-order browser page:
-
-* fileame format: *.gorazor
-
-* using static type model & layout
-
-``` go
-
-@import "github.com/JustinHuang917/gof/appsite/models"
-@model *models.Order
-@layout ./appsite/view/html/defaultrazor.rlayout
-
-<div>
-	<div>OrderNo:@model.OrderNo</div>
-	<div>OrderBy:@model.OrderBy</div>
-	<div>Amount:@model.Amount</div>
-</div>
-```
-create order page:
-``` go
-@import "github.com/JustinHuang917/gof/appsite/models"
-@model *models.Order
-@layout ./appsite/view/html/defaultrazor.rlayout
-
-<form action="./create" method="post">
-	<div>
-		OrderBy:<input type="text" id="txtOrderBy" name="OrderBy"/>
-		Amount:<input type="text" id="txtAmount" name="Amount"/>
-		<input type="Submit" value="Submit"/>
-	</div>
-</form>
 ```
 
 ### Startup
