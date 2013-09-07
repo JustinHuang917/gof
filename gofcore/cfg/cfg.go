@@ -11,17 +11,33 @@ import (
 )
 
 type Config struct {
+
 	//Listen Ptah
 	AppPath string `json:"AppPath"`
 	//Listen Port
-	Port            string         `json:"Port"`
-	GofSessionId    string         `json:GofSessionId`
-	SessionMode     string         `json:SessionMode`
-	SessionExpires  int            `json:SessionExpires`
-	EnableSession   bool           `json:EnableSession`
-	DebugMode       string         `json:DebugMode`
+	Port string `json:"Port"`
+
+	GofSessionId   string `json:GofSessionId`
+	SessionMode    string `json:SessionMode`
+	SessionExpires int    `json:SessionExpires`
+	EnableSession  bool   `json:EnableSession`
+
+	DebugMode string `json:DebugMode`
+
 	HandlerSortings map[string]int `json:HandlerSortings`
-	RouteRules      map[string]int `json:RouteRules`
+
+	/*
+		RouteRules is a list of RouteRule
+		RouteRule is a map that  key is the route rule,and  value
+		is a default values map
+		route rule format:/Order/{id:[0-9]+}
+	*/
+	RouteRules []map[string]map[string]string `json:RouteRules`
+
+	RootPath string `json:RootPath`
+
+	StaticDirs []string `json:StaticDirs`
+
 	//Special Settings
 	AppSettings map[string]string `json:AppSettings`
 }
@@ -45,6 +61,5 @@ func load(cfgPath string) error {
 		fmt.Println(err)
 		return err
 	}
-	fmt.Println(AppConfig)
 	return nil
 }

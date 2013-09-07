@@ -1,8 +1,7 @@
 package gofcore
 
 import (
-	"github.com/JustinHuang917/gof/gofcore/cfg"
-	"sort"
+	"regexp"
 	"strings"
 	"sync"
 )
@@ -40,14 +39,30 @@ func (l literalRouteSegment) IsMatch(str string) bool {
 }
 
 func (a argRouteSegement) IsMatch(str string) bool {
+	if a.regex != nil {
+		return a.regex.MatchString(str)
+	}
 	return true
 }
 
 type argRouteSegement struct {
-	ArgName      string
-	DefaultValue string
+	ArgName         string
+	RegexString     string
+	DefaultValue    string
+	hasDefaultValue bool
+	regex           *regexp.Regexp
 }
 
+func newArgRouteSegement(argName, regex, defaultValue string, hasDefaultValue bool) argRouteSegement {
+	a := &argRouteSegement{ArgName: argName,
+		RegexString:     regex,
+		DefaultValue:    defaultValue,
+		hasDefaultValue: hasDefaultValue}
+	if regex != "" {
+		a.regex = regexp.MustCompile(regex)
+	}
+	return *a
+}
 func formatSegemenetString(str string) string {
 	s := strings.Replace(str, "{{", "{", 0)
 	s = strings.Replace(s, "}}", "}", 0)
@@ -79,7 +94,7 @@ func splitUrlToPathSegmentString(url string) []string {
 	return segs
 }
 
-func createSegement(seg string) routesegment {
+func createSegement(seg string, defaultValues map[string]string) routesegment {
 	if isRouteSeprator(seg) {
 		return *&sepratorRouteSegment{}
 	} else if isLiteralSegementString(seg) {
@@ -90,48 +105,55 @@ func createSegement(seg string) routesegment {
 		values := strings.Split(value, ":")
 		l := len(values)
 		argName := ""
-		defaultValue := ""
+		regexString := ""
 		if l == 1 {
 			argName = values[0]
 		} else {
 			argName = values[0]
-			defaultValue = values[1]
+			regexString = values[1]
 		}
-		return *&argRouteSegement{ArgName: argName, DefaultValue: defaultValue}
+		defaultValue := ""
+		hasDefaultValue := false
+		if defaultValues != nil {
+			if v, ok := defaultValues[argName]; ok {
+				defaultValue = v
+				hasDefaultValue = ok
+			}
+		}
+		return newArgRouteSegement(argName, regexString, defaultValue, hasDefaultValue)
 	}
 }
 
 type Router struct {
 	routeString     string
 	routerSegements []routesegment
+	defaultValues   map[string]string
 }
 
-func NewRouter(routeString string) Router {
+func NewRouter(routeString string, defaultValues map[string]string) Router {
 	segs := splitUrlToPathSegmentString(routeString)
 	segements := make([]routesegment, 0, len(segs))
 	for _, seg := range segs {
-		segements = append(segements, createSegement(seg))
+		segements = append(segements, createSegement(seg, defaultValues))
 	}
-	r := *&Router{routeString: routeString, routerSegements: segements}
+	r := *&Router{routeString: routeString,
+		routerSegements: segements,
+		defaultValues:   defaultValues}
 	return r
 }
 
 func (r *Router) Match(path string) (isMatch bool, args map[string]string) {
 	pathParts := splitUrlToPathSegmentString(path)
-	l := len(r.routerSegements)
+	l := len(pathParts)
 	isMatch = true
 	args = make(map[string]string)
-	index := 1
-	for index, part := range pathParts {
-		if index >= l {
-			isMatch = false
-		}
-		segement := r.routerSegements[index]
-		if segement != nil {
+	for index, segement := range r.routerSegements {
+		if index < l { //when  parts of path less than router parts
+			part := pathParts[index]
 			isMatch = segement.IsMatch(part)
 			if !isMatch {
 				break
-			} else {
+			} else { //if is matched and it's argRouteSegement,need add part as value to return
 				argSeg, ok := (segement).(argRouteSegement)
 				if ok {
 					//the matched argname can't be duplicate
@@ -143,17 +165,34 @@ func (r *Router) Match(path string) (isMatch bool, args map[string]string) {
 					}
 				}
 			}
-		}
-	}
-	//add default value for not mathed args
-	if isMatch && index < l {
-		notMatchedSegments := r.routerSegements[index:]
-		for _, notMatchedSeg := range notMatchedSegments {
-			argSeg, ok := (notMatchedSeg).(argRouteSegement)
-			if ok {
-				if _, ok := args[argSeg.ArgName]; !ok {
+		} else {
+			//pass when is seprator
+			if _, ok := (segement).(sepratorRouteSegment); ok {
+				isMatch = true
+				continue
+			}
+			//when it's argRouteSegement and has default value, pass, and add default value to return
+			argSeg, ok := (segement).(argRouteSegement)
+			if ok && argSeg.hasDefaultValue {
+				//the matched argname can't be duplicate
+				if _, ok := args[argSeg.ArgName]; ok {
+					isMatch = false
+					break
+				} else {
 					args[argSeg.ArgName] = argSeg.DefaultValue
 				}
+			} else {
+				isMatch = false
+				break
+			}
+		}
+	}
+
+	//add not matched default values to return
+	if r.defaultValues != nil && isMatch {
+		for k, v := range r.defaultValues {
+			if _, ok := args[k]; !ok {
+				args[k] = v
 			}
 		}
 	}
@@ -169,27 +208,12 @@ func initRouters() {
 	registeredRouters = make([]Router, 0, 5)
 	routerSyncMutex = new(sync.RWMutex)
 }
-func (r Routers) Len() int {
-	return len(r)
-}
 
-func (r Routers) Less(i, j int) bool {
-	var iRouteString = r[i].routeString
-	var jRouteString = r[j].routeString
-	iOrder := cfg.AppConfig.RouteRules[iRouteString]
-	jOrder := cfg.AppConfig.RouteRules[jRouteString]
-	return iOrder < jOrder
-}
-
-func (h Routers) Swap(i, j int) {
-	h[i], h[j] = h[j], h[i]
-}
-
-func RegisterRouter(routeString string) error {
+func RegisterRouter(routeString string, defaultValues map[string]string) error {
 	defer routerSyncMutex.Unlock()
 	routerSyncMutex.Lock()
-	registeredRouters = append(registeredRouters, NewRouter(routeString))
-	sort.Sort(registeredRouters)
+	registeredRouters = append(registeredRouters, NewRouter(routeString, defaultValues))
+	// sort.Sort(registeredRouters)
 	return nil
 }
 

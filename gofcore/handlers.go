@@ -3,6 +3,7 @@ package gofcore
 import (
 	"github.com/JustinHuang917/gof/gofcore/cfg"
 	"net/http"
+	"path"
 	"reflect"
 	"sort"
 	"strings"
@@ -63,8 +64,10 @@ func initHandlers() {
 
 func RegisterRouters() {
 	rules := cfg.AppConfig.RouteRules
-	for r, _ := range rules {
-		RegisterRouter(r)
+	for _, r := range rules {
+		for k, v := range r {
+			RegisterRouter(k, v)
+		}
 	}
 }
 
@@ -72,22 +75,27 @@ type RouterHandler struct {
 }
 
 func (r *RouterHandler) Handle(context *HttpContext) {
-	path := context.Request.URL.Path
-	if ok, args := IsMatchRoute(path); ok {
-		controerName := args["controller"]
-		actionName := args["action"]
-		context.ControllerName = controerName
-		context.ActionName = actionName
-		for k, v := range args {
-			context.RoutesData.Add(k, v)
+	p := context.Request.URL.Path
+	if ok := r.isStaticContent(context); !ok {
+		if ok, args := IsMatchRoute(p); ok {
+			controerName := args["controller"]
+			actionName := args["action"]
+			context.ControllerName = controerName
+			context.ActionName = actionName
+			for k, v := range args {
+				context.RoutesData.Add(k, v)
+			}
 		}
+		//merge query string to route data
+		r.mergeRouteDataAndQueryString(context)
+		context.RouteName = strings.ToLower("/" + context.ControllerName + "/" + context.ActionName)
+		Debug(context.ControllerName, Runtime)
+		Debug(context.ActionName, Runtime)
+		Debug(context.RouteName, Runtime)
+	} else {
+		name := path.Join(cfg.AppConfig.RootPath, p)
+		http.ServeFile(context.ResponseWriter, context.Request, name)
 	}
-	//merge query string to route data
-	r.mergeRouteDataAndQueryString(context)
-	context.RouteName = strings.ToLower("/" + context.ControllerName + "/" + context.ActionName)
-	Debug(context.ControllerName, Runtime)
-	Debug(context.ActionName, Runtime)
-	Debug(context.RouteName, Runtime)
 }
 func (r *RouterHandler) mergeRouteDataAndQueryString(context *HttpContext) {
 	req := context.Request
@@ -98,6 +106,19 @@ func (r *RouterHandler) mergeRouteDataAndQueryString(context *HttpContext) {
 			context.RoutesData.Add(k, queryValues.Get(k))
 		}
 	}
+}
+
+func (r *RouterHandler) isStaticContent(context *HttpContext) bool {
+	req := context.Request
+	path := req.URL.Path
+	if cfg.AppConfig.StaticDirs != nil {
+		for _, dir := range cfg.AppConfig.StaticDirs {
+			if hasPrefix := strings.HasPrefix(path, dir); hasPrefix {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 type DefaultHandler struct {

@@ -5,17 +5,32 @@
 	"SessionMode":"InProc",
 	"EnableSession":true,
 	"SessionExpires":60,
-	"DebugMode":"runtime",
-	"RouteRules":{
-		"/app/{controller}/{action}/{id}":0,
-		"/app/Home/{controller}/{action}/{id}":1
-	},
+	"DebugMode":"Startup",
+
+	"RouteRules":[
+		{
+			"/Order/{id:[0-9]+}":
+				{"controller":"Order","action":"Order","id":"0"}
+		},
+		{
+			"/{controller}/{action}":
+				{"controller":"Home","action":"Index"}
+		}
+	],
+	
 	"HandlerSortings":{
 		"github.com/JustinHuang917/gof/gofcore.RouterHandler": -2,		
 		"github.com/JustinHuang917/gof/gofcore.SessionHandler": -1,
 		"github.com/JustinHuang917/gof/gofcore.DefaultHandler": 0
 	},
-	"AppSettings":{
-		"Key":"value"
-	}
+
+	"StaticDirs":[
+		"/static/js",
+		"/static/css",
+		"/static/img",
+		"/favicon.ico"
+	],
+	"RootPath":"/home/justinhuang/src/go/src/github.com/JustinHuang917/gof/appsite",
+	
+	"AppSettings":{}
 }
