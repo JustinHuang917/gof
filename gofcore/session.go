@@ -5,7 +5,6 @@
 package gofcore
 
 import (
-	// "fmt"
 	"github.com/JustinHuang917/gof/gofcore/cfg"
 	"time"
 )
