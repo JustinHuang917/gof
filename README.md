@@ -9,7 +9,7 @@ GOF: The golang mvc web framework
 
 define layout page
 
-filename: *.rlayout
+file extension name: .rlayout
 
 ``` go
 <html>
@@ -21,9 +21,9 @@ filename: *.rlayout
 </html>
 ```
 
-order browser page:
+view for displaying:
 
-* fileame format: *.gorazor
+* file extension name: *.gorazor
 
 * using static type model & layout
 
@@ -39,7 +39,7 @@ order browser page:
 	<div>Amount:@model.Amount</div>
 </div>
 ```
-create order page:
+view for creating:
 ``` go
 @import "github.com/JustinHuang917/gof/appsite/models"
 @model *models.Order
@@ -127,7 +127,9 @@ func (c OrderController) PostCreate(context *gofcore.HttpContext, order models.O
 ```
 
 ### Startup
-All view files(*.gorazor)  need to build to go source files,so,just run **./build.sh** to build. 
+All view files(*.gorazor)  need to build to go source files,so,just 
+
+run **./build.sh** to build. 
 
 run **./run.sh** file to startup
 
