@@ -8,7 +8,7 @@ GOF: The golang mvc web framework
 
 define layout page
 
-file extension name: .rlayout
+file extension name: *.rlayout
 
 ``` go
 <html>
@@ -132,16 +132,4 @@ run **./build.sh** to build.
 
 run **./run.sh** file to startup
 
-access http://localhost:9999/Order/Create
-
-[![xrefs](https://sourcegraph.com/api/repos/github.com/JustinHuang917/gof/badges/xrefs.png)](https://sourcegraph.com/github.com/JustinHuang917/gof)
-
-[![funcs](https://sourcegraph.com/api/repos/github.com/JustinHuang917/gof/badges/funcs.png)](https://sourcegraph.com/github.com/JustinHuang917/gof)
-
-[![top func](https://sourcegraph.com/api/repos/github.com/JustinHuang917/gof/badges/top-func.png)](https://sourcegraph.com/github.com/JustinHuang917/gof)
-
-[![library users](https://sourcegraph.com/api/repos/github.com/JustinHuang917/gof/badges/library-users.png)](https://sourcegraph.com/github.com/JustinHuang917/gof)
-
-[![status](https://sourcegraph.com/api/repos/github.com/JustinHuang917/gof/badges/status.png)](https://sourcegraph.com/github.com/JustinHuang917/gof)
-
-	
+access: http://localhost:9999/Order/Create
